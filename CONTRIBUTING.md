@@ -4,7 +4,7 @@ Thanks for your interest in contributing to Shard. This document describes the w
 
 ## Code of conduct
 
-Be respectful, constructive, and inclusive. Discrimination, harassment, or abuse will not be tolerated. Maintainers reserve the right to close contributions or block users who don't follow this principle.
+This project adheres to the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you are expected to uphold it. Report unacceptable behavior to [coc@shardbot.gg](mailto:coc@shardbot.gg).
 
 ## Reporting bugs
 
