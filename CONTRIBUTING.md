@@ -146,15 +146,18 @@ Use `once: true` for events that must fire only once (e.g. `ClientReady`).
 
 ## Coding standards
 
-Full coding conventions live in [AGENTS.md](AGENTS.md). Non-negotiables:
+Non-negotiables — PRs that violate these will be sent back for changes:
 
-- No `any`, no `!` non-null assertion, no unnecessary `as` casts.
-- No business logic in `index.ts`.
-- No magic strings or numbers — use named constants.
-- Errors logged with context via the structured `logger`, never `console`.
-- One file = one command / one event / one component.
-
-Read AGENTS.md before contributing to avoid friction during review.
+- **TypeScript strict.** No `any`, no `!` non-null assertion, no unnecessary `as` casts (use type guards instead).
+- **Runtime: Bun.** Use `bun add`/`bun install` (never npm/yarn/pnpm), `bun test` (not Jest/Vitest), `Bun.env` (no `dotenv`). Prefer native Bun APIs (`Bun.file`, `bun:sqlite`, `Bun.$`) over their Node equivalents.
+- **discord.js v14.** Slash commands only (no prefix commands), always use builders (`SlashCommandBuilder`, `EmbedBuilder`, `ActionRowBuilder`, …), never raw objects. Use `flags: MessageFlags.Ephemeral`, not the deprecated `ephemeral: true`. Request only the intents you need.
+- **No business logic in `index.ts`** — it orchestrates loaders and process listeners, nothing more.
+- **No magic strings or numbers** — extract named constants at the top of the file or in `lib/constants.ts`.
+- **One file = one command / one event / one component.** Files in `src/commands/**` and `src/events/**` are auto-loaded via `Bun.Glob` — no manual registry to maintain.
+- **Structured logging.** Errors logged with context (`command`, `user.id`, `guild.id`) via the `logger` from `src/lib/logger.ts`, never `console`.
+- **No side effects on import** (except `src/index.ts`). An imported file must not open connections or start timers.
+- **No comments describing what the code does.** Naming should be enough. A comment is only justified to explain a non-obvious *why* (workaround, external constraint).
+- **No premature abstraction.** Three duplicated lines are better than a helper used in a single place.
 
 ## License
 

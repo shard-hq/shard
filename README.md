@@ -72,7 +72,7 @@ Generate an OAuth2 install link in the Discord Developer Portal with:
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [AGENTS.md](AGENTS.md) for coding conventions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and coding conventions.
 
 ## License
 
