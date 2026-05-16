@@ -44,7 +44,7 @@
 ### Setup
 
 ```bash
-git clone https://github.com/your-user/shard.git
+git clone https://github.com/shard-hq/shard.git
 cd shard
 bun install
 cp .env.example .env
@@ -88,10 +88,10 @@ Generate an OAuth2 install link in the Discord Developer Portal with:
 
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and [AGENTS.md](AGENTS.md) for coding conventions.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
 ## License
 
-To be defined. Until a `LICENSE` file is added, all rights are reserved by the authors.
+Shard is free software released under the [GNU Affero General Public License v3.0](LICENSE) (AGPLv3) or any later version.
