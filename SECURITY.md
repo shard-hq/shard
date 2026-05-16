@@ -18,7 +18,7 @@ Shard is pre-1.0. Only the latest commit on the `main` branch receives security 
 Use one of the following private channels:
 
 1. **GitHub Security Advisories** (preferred) — open a private report via the [Security tab](https://github.com/shard-hq/shard/security/advisories/new) of the repository. This gives maintainers a private workspace to triage, patch, and coordinate disclosure with you.
-2. **Email** — [security@shardbot.gg](mailto:security@shardbot.gg). Use this if you cannot access GitHub Security Advisories.
+2. **Email** — [mael.duret@icloud.com](mailto:mael.duret@icloud.com). Use this if you cannot access GitHub Security Advisories.
 
 When reporting, please include:
 

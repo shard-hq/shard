@@ -4,7 +4,7 @@ Thanks for your interest in contributing to Shard. This document describes the w
 
 ## Code of conduct
 
-This project adheres to the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you are expected to uphold it. Report unacceptable behavior to [coc@shardbot.gg](mailto:coc@shardbot.gg).
+This project adheres to the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you are expected to uphold it. Report unacceptable behavior to [mael.duret@icloud.com](mailto:mael.duret@icloud.com).
 
 ## Reporting bugs
 
