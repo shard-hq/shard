@@ -4,7 +4,7 @@
 
 **The open-source, self-hostable alternative to MEE6, Dyno, Carl-bot, and ProBot — without paywalls, premium tiers, or feature gating.**
 
-[![Bun](https://img.shields.io/badge/Bun-1.x-fbf0df?logo=bun&logoColor=000)](https://bun.sh)
+[![Bun](https://img.shields.io/badge/Bun-1.x-fbf0df?logo=bun&logoColor=fff)](https://bun.sh)
 [![discord.js](https://img.shields.io/badge/discord.js-v14-5865f2?logo=discord&logoColor=fff)](https://discord.js.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org)
 [![ESLint](https://img.shields.io/badge/ESLint-type--checked-4b32c3?logo=eslint&logoColor=fff)](https://eslint.org)
