@@ -8,40 +8,28 @@
 [![discord.js](https://img.shields.io/badge/discord.js-v14-5865f2?logo=discord&logoColor=fff)](https://discord.js.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=fff)](https://www.typescriptlang.org)
 [![ESLint](https://img.shields.io/badge/ESLint-type--checked-4b32c3?logo=eslint&logoColor=fff)](https://eslint.org)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-d22128?logo=gnu&logoColor=fff)](LICENSE)
 
 </div>
 
----
+Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](https://www.typescriptlang.org), and [discord.js v14](https://discord.js.org).
 
-## Why Shard?
+## Features
 
-- **Open-source** — every line is auditable, modifiable, and forkable.
+- **Free and open-source** — released under the [AGPLv3](LICENSE), every line auditable, modifiable, and forkable.
 - **Self-hostable** — run it on your own infrastructure and own your data. A maintained hosted instance is also available.
 - **No paywalls** — features are never artificially gated.
+- **Modern stack** — Bun runtime, TypeScript strict, discord.js v14, ESLint type-checked.
+- **Auto-deployed commands** — slash commands register themselves on startup, with a SHA-256 hash cache that skips redundant API calls.
 
----
-
-## Tech stack
-
-| Layer | Choice |
-|---|---|
-| Runtime | [Bun](https://bun.sh) |
-| Language | [TypeScript](https://www.typescriptlang.org) (strict) |
-| Discord API | [discord.js v14](https://discord.js.org) |
-| Validation | [Zod](https://zod.dev) |
-| Logging | [pino](https://getpino.io) + [pino-pretty](https://github.com/pinojs/pino-pretty) |
-| Linting | [ESLint 9](https://eslint.org) + [typescript-eslint 8](https://typescript-eslint.io) |
-
----
-
-## Getting started
+## Quick start
 
 ### Prerequisites
 
 - [Bun](https://bun.sh) `1.x` or later
 - A Discord application with a bot token — create one at the [Discord Developer Portal](https://discord.com/developers/applications)
 
-### Setup
+### Install
 
 ```bash
 git clone https://github.com/shard-hq/shard.git
@@ -50,28 +38,26 @@ bun install
 cp .env.example .env
 ```
 
-Open `.env` and fill in your bot token:
+Add your bot token to `.env`:
 
 ```dotenv
 DISCORD_TOKEN=your-token-here
 ```
 
-Then run:
+### Run
 
 ```bash
 bun run dev
 ```
 
-The bot validates the environment, loads commands and events, logs in, and deploys slash commands globally. The first global deployment can take up to an hour to propagate; subsequent updates are near-instant.
+The bot validates the environment, loads commands and events, logs in, and deploys slash commands globally. First-time global deployment can take up to an hour to propagate; subsequent updates are near-instant.
 
-### Inviting the bot
+### Invite
 
 Generate an OAuth2 install link in the Discord Developer Portal with:
 
 - **Scopes:** `bot`, `applications.commands`
 - **Permissions:** adjust to the features you enable.
-
----
 
 ## Scripts
 
@@ -84,13 +70,9 @@ Generate an OAuth2 install link in the Discord Developer Portal with:
 | `bun run lint:fix` | ESLint auto-fix |
 | `bun test` | Run the test suite |
 
----
-
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [AGENTS.md](AGENTS.md) for coding conventions.
 
 ## License
 
