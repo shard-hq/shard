@@ -24,35 +24,36 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) `1.3` or later
-- A Discord application with a bot token — create one at the [Discord Developer Portal](https://discord.com/developers/applications)
+A Discord application with a bot token — create one at the [Discord Developer Portal](https://discord.com/developers/applications).
 
 ### Install
 
 ```bash
 git clone https://github.com/shard-hq/shard.git
 cd shard
-bun install
-cp .env.example .env
+cp .env.example .env  # add your DISCORD_TOKEN
+docker compose up -d
 ```
 
-Add your bot token to `.env`:
-
-```dotenv
-DISCORD_TOKEN=your-token-here
-```
-
-### Run
-
-```bash
-bun run dev
-```
-
-Slash commands are deployed globally on startup. First-time propagation can take up to an hour; subsequent updates are near-instant.
+Update later with `docker compose pull && docker compose up -d`.
 
 ### Invite
 
 Generate an OAuth2 install link in the Developer Portal with scopes `bot` and `applications.commands`, plus the permissions matching the features you enable.
+
+## Run without Docker
+
+For local development or contributing. Requires [Bun](https://bun.sh) `1.3` or later.
+
+```bash
+git clone https://github.com/shard-hq/shard.git
+cd shard
+bun install
+cp .env.example .env  # add your DISCORD_TOKEN
+bun run dev
+```
+
+Slash commands are deployed globally on startup. First-time propagation can take up to an hour; subsequent updates are near-instant.
 
 ## Scripts
 
