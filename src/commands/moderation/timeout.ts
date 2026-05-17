@@ -33,7 +33,7 @@ const DURATION_CHOICES = [
 export default defineCommand({
   data: new SlashCommandBuilder()
     .setName("timeout")
-    .setDescription("Timeout a user (Discord native timeout).")
+    .setDescription("Timeout a user.")
     .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption((opt) =>
