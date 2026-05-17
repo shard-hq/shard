@@ -4,7 +4,7 @@ import { LOG_LEVELS, logger } from "./lib/logger";
 const EnvSchema = z.object({
   DISCORD_TOKEN: z
     .string()
-    .min(50, "DISCORD_TOKEN must be a valid Discord bot token"),
+    .min(50, { error: "DISCORD_TOKEN must be a valid Discord bot token" }),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("info"),
 });

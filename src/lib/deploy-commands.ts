@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { type Client, REST, Routes } from "discord.js";
 import { env } from "../env";
 import { commandRegistry } from "./command-registry";
@@ -7,7 +6,7 @@ import { logger } from "./logger";
 const CACHE_FILE = ".cache/commands.hash";
 
 const computeHash = (data: unknown): string =>
-  createHash("sha256").update(JSON.stringify(data)).digest("hex");
+  new Bun.CryptoHasher("sha256").update(JSON.stringify(data)).digest("hex");
 
 const readCache = async (): Promise<string | null> => {
   try {
