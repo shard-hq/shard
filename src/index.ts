@@ -2,10 +2,15 @@ import { env } from "./env";
 import { logger } from "./lib/logger";
 import { client } from "./client";
 import { closeDb } from "./db";
+import { runMigrations } from "./db/migrate";
+import { loadButtons } from "./loaders/buttons";
 import { loadCommands } from "./loaders/commands";
 import { loadEvents } from "./loaders/events";
 
+runMigrations();
+
 await loadCommands();
+await loadButtons();
 await loadEvents(client);
 
 const shutdown = async (signal: string): Promise<void> => {
