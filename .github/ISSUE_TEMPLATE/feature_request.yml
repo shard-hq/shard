@@ -1,29 +1,26 @@
 name: Feature request
-description: Suggest a new feature or enhancement for Shard
+description: Suggest a new feature for Shard
 title: "feat: <short description>"
 labels: ["enhancement", "triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a feature. **Describe the use case first, not the implementation** — discussion happens on the issue before code is written.
+        Thanks for suggesting a feature. Describe the **use case first**, not the implementation — discussion happens on the issue before code is written.
 
   - type: checkboxes
     id: preflight
     attributes:
       label: Preflight
       options:
-        - label: I have searched [existing issues](https://github.com/shard-hq/shard/issues?q=is%3Aissue) and this feature has not already been requested.
-          required: true
-        - label: This feature aligns with Shard's scope (a self-hostable Discord bot — see the [README](https://github.com/shard-hq/shard/blob/main/README.md)).
+        - label: I have searched [existing issues](https://github.com/shard-hq/shard/issues?q=is%3Aissue) and this has not been requested.
           required: true
 
   - type: textarea
     id: problem
     attributes:
       label: Problem / use case
-      description: What problem does this solve, or what use case does it enable? Who benefits and how?
-      placeholder: As a server admin, I want to automatically welcome new members in a configurable channel so I do not have to greet each one manually.
+      description: What problem does this solve? Who benefits and how?
     validations:
       required: true
 
@@ -31,11 +28,7 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: How would this work from a user's perspective? Command names, options, expected output. Implementation details are optional and can be discussed later.
-      placeholder: |
-        A new `/welcome` command with options:
-        - `channel` (required) — where to post the message
-        - `message` (required) — supports `{user}` and `{server}` placeholders
+      description: How would this work from a user's perspective? Command names, options, expected output.
     validations:
       required: true
 
@@ -43,35 +36,6 @@ body:
     id: alternatives
     attributes:
       label: Alternatives considered
-      description: Other approaches you thought about and why you ruled them out. Workarounds you currently use.
-    validations:
-      required: false
-
-  - type: dropdown
-    id: scope
-    attributes:
-      label: Scope
-      description: How big do you estimate this change is?
-      options:
-        - Small — a single command or event
-        - Medium — a new module or subsystem
-        - Large — touches the bootstrap, deployment, or persistence layer
-        - Not sure
-    validations:
-      required: true
-
-  - type: checkboxes
-    id: contribution
-    attributes:
-      label: Contribution
-      options:
-        - label: I am willing to open a pull request to implement this (after the use case is approved).
-          required: false
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional context
-      description: Screenshots, mockups, links to similar features in other bots, related issues.
+      description: Other approaches you ruled out, workarounds you currently use.
     validations:
       required: false

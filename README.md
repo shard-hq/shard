@@ -16,11 +16,9 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 
 ## Features
 
-- **Free and open-source** — released under the [AGPLv3](LICENSE), every line auditable, modifiable, and forkable.
-- **Self-hostable** — run it on your own infrastructure and own your data. A maintained hosted instance is also available.
-- **No paywalls** — features are never artificially gated.
-- **Modern stack** — Bun runtime, TypeScript strict, discord.js v14, ESLint type-checked.
-- **Auto-deployed commands** — slash commands register themselves on startup, with a SHA-256 hash cache that skips redundant API calls.
+- **Self-hostable** — run it on your own infrastructure, own your data.
+- **Modern stack** — Bun, TypeScript strict, discord.js v14, ESLint type-checked.
+- **Auto-deployed commands** — slash commands register on startup with a SHA-256 hash cache that skips redundant API calls.
 
 ## Quick start
 
@@ -50,14 +48,11 @@ DISCORD_TOKEN=your-token-here
 bun run dev
 ```
 
-The bot validates the environment, loads commands and events, logs in, and deploys slash commands globally. First-time global deployment can take up to an hour to propagate; subsequent updates are near-instant.
+Slash commands are deployed globally on startup. First-time propagation can take up to an hour; subsequent updates are near-instant.
 
 ### Invite
 
-Generate an OAuth2 install link in the Discord Developer Portal with:
-
-- **Scopes:** `bot`, `applications.commands`
-- **Permissions:** adjust to the features you enable.
+Generate an OAuth2 install link in the Developer Portal with scopes `bot` and `applications.commands`, plus the permissions matching the features you enable.
 
 ## Scripts
 
@@ -72,7 +67,7 @@ Generate an OAuth2 install link in the Discord Developer Portal with:
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and coding conventions.
+Contributions of any size are welcome — typo fixes count just as much as new commands. Have a look at [CONTRIBUTING.md](CONTRIBUTING.md) to get started, or open a [discussion](https://github.com/shard-hq/shard/discussions) if you want to chat through an idea first.
 
 ## License
 

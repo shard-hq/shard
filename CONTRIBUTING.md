@@ -1,36 +1,24 @@
 # Contributing to Shard
 
-Thanks for your interest in contributing to Shard. This document describes the workflow and conventions used in this repository.
+Hey, thanks for thinking about contributing! Shard is young and small, so every fix, doc tweak, and new command genuinely makes a difference. This guide walks through how things work — nothing here is set in stone, so feel free to ask in an issue or discussion if anything's unclear.
 
 ## Code of conduct
 
-This project adheres to the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you are expected to uphold it. Report unacceptable behavior to [mael.duret@icloud.com](mailto:mael.duret@icloud.com).
+We follow the [Contributor Covenant](CODE_OF_CONDUCT.md) so everyone feels welcome here. If something's off, please reach out to [mael.duret@icloud.com](mailto:mael.duret@icloud.com).
 
-## Reporting bugs
+## Branching model
 
-Open a GitHub issue with:
+This repository follows [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/):
 
-- a clear description of the unexpected behavior
-- steps to reproduce
-- expected vs. actual behavior
-- environment (Bun version, OS, discord.js version)
-
-## Suggesting features
-
-Open a GitHub issue describing the **use case first**, not the implementation. Discussion happens on the issue before code is written.
+- **`main`** — released code. Only receives merges from `develop` (releases) or `hotfix/*` (urgent fixes on a published release).
+- **`develop`** — active integration branch and default branch on GitHub. All feature work targets `develop`.
+- **`feat/*`, `fix/*`, `chore/*`, …** — short-lived branches created from `develop`, merged back via pull request.
 
 ## Development setup
 
-1. Fork the repository on GitHub.
-2. Clone your fork locally:
-
-   ```bash
-   git clone https://github.com/shard-hq/shard.git
-   cd shard
-   ```
-
-3. Install dependencies and configure your bot token — see [README.md](README.md#getting-started).
-4. Create a branch from `develop` using a [Conventional Branch](https://conventional-branch.github.io) name:
+1. Fork the repository and clone your fork.
+2. Install dependencies and configure your bot token — see the [README](README.md#quick-start).
+3. Create a branch from `develop` with a [Conventional Branch](https://conventional-branch.github.io) name:
 
    ```bash
    git checkout develop
@@ -38,62 +26,19 @@ Open a GitHub issue describing the **use case first**, not the implementation. D
    git checkout -b feat/your-feature-name
    ```
 
-Valid prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `test/`, `perf/`, `ci/`.
+   Valid prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `test/`, `perf/`, `ci/`.
 
 ## Commit messages
 
-This repository follows the [Conventional Commits](https://www.conventionalcommits.org/) specification. All commit messages must be in English.
+[Conventional Commits](https://www.conventionalcommits.org/), in English: `<type>(<scope>): <description>`.
 
-```
-<type>(<optional scope>): <description>
-
-[optional body]
-
-[optional footer]
-```
-
-### Types
-
-| Type | When to use |
-|---|---|
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, whitespace (no logic change) |
-| `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `perf` | Performance improvement |
-| `test` | Adding or correcting tests |
-| `chore` | Maintenance, dependencies, tooling |
-| `ci` | CI configuration changes |
-| `build` | Build system or external dependency changes |
-
-### Examples
-
-```
-feat(commands): add /welcome with configurable channel
-fix(loader): handle invalid command exports gracefully
-docs(readme): update getting started section
-refactor(logger): drop pino-pretty in production builds
-chore(deps): bump discord.js to 14.27
-```
-
-### Breaking changes
-
-Append `!` after the type/scope and add a `BREAKING CHANGE:` footer:
-
-```
-feat(api)!: switch slash command deployment to global only
-
-BREAKING CHANGE: DISCORD_GUILD_ID env var has been removed.
-```
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`. Append `!` and add a `BREAKING CHANGE:` footer for breaking changes.
 
 ## Pull requests
 
-- **Target `develop`**, never `main`.
-- The PR title must follow Conventional Commits (e.g. `feat(commands): add /welcome`).
-- One feature or fix per PR — don't bundle unrelated changes.
-- Link the related issue in the description (e.g. `Closes #42`).
-- All of the following must pass locally before opening:
+- Target `develop`. Use `main` only via a `hotfix/*` branch on a published release.
+- One feature or fix per PR, please — easier to review and revert. Link the related issue with `Closes #N`.
+- Run locally before opening:
 
   ```bash
   bun run typecheck
@@ -101,64 +46,25 @@ BREAKING CHANGE: DISCORD_GUILD_ID env var has been removed.
   bun test
   ```
 
-- Run the bot locally (`bun run dev`) and verify the change actually works in Discord. Typecheck doesn't prove a command behaves correctly.
-- Never bypass git hooks (`--no-verify`).
-
-A maintainer will review and either merge, request changes, or close.
-
-## Adding a command
-
-Create `src/commands/<category>/<name>.ts`:
-
-```ts
-import { SlashCommandBuilder } from "discord.js";
-import { defineCommand } from "../../types/command";
-
-export default defineCommand({
-  data: new SlashCommandBuilder()
-    .setName("hello")
-    .setDescription("Says hello."),
-  async execute(interaction) {
-    await interaction.reply({ content: `Hello, ${interaction.user.username}!` });
-  },
-});
-```
-
-The loader picks it up on next startup, registers it, and the deploy step pushes it to Discord (no-op if the command set hasn't changed).
-
-## Adding an event handler
-
-Create `src/events/<eventName>.ts`:
-
-```ts
-import { Events } from "discord.js";
-import { defineEvent } from "../types/event";
-
-export default defineEvent({
-  name: Events.GuildMemberAdd,
-  async execute(member) {
-    // ...
-  },
-});
-```
-
-Use `once: true` for events that must fire only once (e.g. `ClientReady`).
+- Try the change in a real Discord server (`bun run dev`) — typecheck doesn't prove a command actually works.
+- Please don't bypass git hooks (`--no-verify`). If a hook misbehaves, open an issue and we'll fix the hook.
 
 ## Coding standards
 
-Non-negotiables — PRs that violate these will be sent back for changes:
+A few things we try to stick to:
 
-- **TypeScript strict.** No `any`, no `!` non-null assertion, no unnecessary `as` casts (use type guards instead).
-- **Runtime: Bun.** Use `bun add`/`bun install` (never npm/yarn/pnpm), `bun test` (not Jest/Vitest), `Bun.env` (no `dotenv`). Prefer native Bun APIs (`Bun.file`, `bun:sqlite`, `Bun.$`) over their Node equivalents.
-- **discord.js v14.** Slash commands only (no prefix commands), always use builders (`SlashCommandBuilder`, `EmbedBuilder`, `ActionRowBuilder`, …), never raw objects. Use `flags: MessageFlags.Ephemeral`, not the deprecated `ephemeral: true`. Request only the intents you need.
-- **No business logic in `index.ts`** — it orchestrates loaders and process listeners, nothing more.
-- **No magic strings or numbers** — extract named constants at the top of the file or in `lib/constants.ts`.
-- **One file = one command / one event / one component.** Files in `src/commands/**` and `src/events/**` are auto-loaded via `Bun.Glob` — no manual registry to maintain.
-- **Structured logging.** Errors logged with context (`command`, `user.id`, `guild.id`) via the `logger` from `src/lib/logger.ts`, never `console`.
-- **No side effects on import** (except `src/index.ts`). An imported file must not open connections or start timers.
-- **No comments describing what the code does.** Naming should be enough. A comment is only justified to explain a non-obvious *why* (workaround, external constraint).
-- **No premature abstraction.** Three duplicated lines are better than a helper used in a single place.
+- **TypeScript strict.** No `any`, no `!` non-null assertion, no unnecessary `as` — narrow with type guards.
+- **Bun runtime.** Use `bun add`/`bun install`, `bun test`, `Bun.env`. Prefer native Bun APIs (`Bun.file`, `bun:sqlite`, `Bun.$`) over Node equivalents. No `dotenv`, no npm/yarn/pnpm.
+- **discord.js v14.** Slash commands only, always builders (`SlashCommandBuilder`, `EmbedBuilder`, …), `flags: MessageFlags.Ephemeral` (not `ephemeral: true`), least-privilege intents.
+- **One file = one command / one event / one component.** Auto-loaded via `Bun.Glob`, no manual registry.
+- **No business logic in `src/index.ts`** — bootstrap only.
+- **No magic strings or numbers** — extract named constants.
+- **Structured logging** via `src/lib/logger.ts`, never `console`.
 
 ## License
 
-By contributing, you agree that your contributions are licensed under the project's [GNU Affero General Public License v3.0](LICENSE) (AGPLv3) or any later version.
+By contributing, you agree your contributions are licensed under the [GNU AGPL v3](LICENSE) or any later version — same as the rest of the project.
+
+---
+
+Thanks again for taking the time. If you get stuck, open a discussion and we'll figure it out together.

@@ -8,27 +8,23 @@ body:
       value: |
         Thanks for taking the time to report a bug. Please fill out the fields below so we can reproduce and fix the issue quickly.
 
-        **Security note**: do not use this form to report a vulnerability. See [SECURITY.md](https://github.com/shard-hq/shard/blob/main/SECURITY.md) for the private disclosure process.
+        **Security note:** do not use this form to report a vulnerability. See [SECURITY.md](https://github.com/shard-hq/shard/blob/main/SECURITY.md) for the private disclosure process.
 
   - type: checkboxes
     id: preflight
     attributes:
       label: Preflight
-      description: Before filing, please confirm the following.
       options:
         - label: I have searched [existing issues](https://github.com/shard-hq/shard/issues?q=is%3Aissue) and this bug has not been reported.
           required: true
-        - label: I am running the latest commit on `main` (or I have noted the commit/version below).
-          required: true
-        - label: This is not a security vulnerability (those go through [SECURITY.md](https://github.com/shard-hq/shard/blob/main/SECURITY.md)).
+        - label: I am running the latest commit on `main` (or noted the commit/version below).
           required: true
 
   - type: textarea
     id: description
     attributes:
       label: Description
-      description: A clear and concise description of the unexpected behavior.
-      placeholder: When I run `/ping`, the bot replies with the wrong latency.
+      description: A clear, concise description of the bug.
     validations:
       required: true
 
@@ -36,78 +32,27 @@ body:
     id: reproduction
     attributes:
       label: Steps to reproduce
-      description: Minimal, deterministic steps to trigger the bug.
-      placeholder: |
-        1. Start the bot with `bun run dev`
-        2. In Discord, run `/ping`
-        3. Observe the reply
     validations:
       required: true
 
   - type: textarea
     id: expected
     attributes:
-      label: Expected behavior
-      placeholder: The reply should show the WebSocket latency in ms.
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: Actual behavior
+      label: Expected vs. actual behavior
       description: Include the full error message and stack trace if there is one.
-      placeholder: The reply shows `Pong! NaNms`.
     validations:
       required: true
 
   - type: textarea
-    id: logs
+    id: environment
     attributes:
-      label: Logs
-      description: Relevant log output. Redact your bot token and any user IDs you do not want public.
-      render: shell
-    validations:
-      required: false
-
-  - type: input
-    id: bun-version
-    attributes:
-      label: Bun version
-      description: Output of `bun --version`.
-      placeholder: "1.3.14"
-    validations:
-      required: true
-
-  - type: input
-    id: discordjs-version
-    attributes:
-      label: discord.js version
-      description: From `package.json` or `bun pm ls`.
-      placeholder: "14.26.4"
-    validations:
-      required: true
-
-  - type: input
-    id: shard-version
-    attributes:
-      label: Shard version / commit
-      description: Tag, release, or commit SHA you are running.
-      placeholder: "dcfd2ee"
-    validations:
-      required: true
-
-  - type: dropdown
-    id: os
-    attributes:
-      label: Operating system
-      options:
-        - Linux
-        - macOS
-        - Windows (native)
-        - Windows (WSL)
-        - Docker / container
-        - Other
+      label: Environment
+      description: Bun version, discord.js version, Shard commit SHA, and OS.
+      placeholder: |
+        Bun: 1.3.14
+        discord.js: 14.26.4
+        Shard: dcfd2ee
+        OS: macOS 15.3
     validations:
       required: true
 
@@ -115,6 +60,6 @@ body:
     id: additional
     attributes:
       label: Additional context
-      description: Anything else that might help — screenshots, related issues, recent changes to your config.
+      description: Logs (token redacted), screenshots, related issues.
     validations:
       required: false

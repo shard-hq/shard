@@ -1,62 +1,36 @@
 # Security Policy
 
-Thanks for helping keep Shard and its users safe. This document describes how to report a vulnerability and what to expect in return.
+Thanks for helping keep Shard and its users safe. Here's how to report a vulnerability and what you can expect from us in return.
 
 ## Supported versions
 
-Shard is pre-1.0. Only the latest commit on the `main` branch receives security fixes — there are no maintained LTS branches. If you self-host, keep your deployment current.
+The latest release on `main` is the supported line for security fixes. Older releases and forks aren't backported, so please keep your self-hosted deployment current.
 
-| Version | Supported |
-|---|---|
-| `main` (latest) | Yes |
-| Older commits / forks | No |
+Per the [branching model](CONTRIBUTING.md#branching-model), fixes are developed on `develop` first and reach `main` via release.
 
 ## Reporting a vulnerability
 
-**Do not open a public GitHub issue, pull request, or Discord message for security reports.** Public disclosure before a fix is available puts every self-hosted instance at risk.
+Please don't open a public issue — public disclosure before a fix is out puts every self-hosted instance at risk. Use one of these private channels instead:
 
-Use one of the following private channels:
+1. **GitHub Security Advisories** (preferred) — [report privately](https://github.com/shard-hq/shard/security/advisories/new).
+2. **Email** — [mael.duret@icloud.com](mailto:mael.duret@icloud.com).
 
-1. **GitHub Security Advisories** (preferred) — open a private report via the [Security tab](https://github.com/shard-hq/shard/security/advisories/new) of the repository. This gives maintainers a private workspace to triage, patch, and coordinate disclosure with you.
-2. **Email** — [mael.duret@icloud.com](mailto:mael.duret@icloud.com). Use this if you cannot access GitHub Security Advisories.
-
-When reporting, please include:
-
-- a clear description of the vulnerability and its impact
-- the affected component (file, command, event handler, deployment step…)
-- steps to reproduce, or a proof-of-concept
-- the commit SHA or version you tested against
-- any suggested remediation, if you have one
+If you can, include: a description and impact, the affected component, reproduction steps or a PoC, and the commit SHA you tested. Don't worry if you don't have everything — send what you have, we'll follow up.
 
 ## What to expect
 
-- **Acknowledgement**: within **72 hours** of receipt.
-- **Initial assessment**: within **7 days**, including severity rating and whether we accept the report as a vulnerability.
-- **Fix timeline**: communicated after triage; depends on severity and complexity. Critical issues are prioritized.
-- **Disclosure**: coordinated. We will agree with you on a disclosure date, publish a patched release first, then a GitHub Security Advisory with a CVE if applicable.
+- **Acknowledgement** within **72 hours**.
+- **Triage** within **7 days**, including severity rating.
+- **Disclosure** coordinated with you; a patched release ships before the GitHub Security Advisory is published.
 
-We will keep you updated throughout the process and credit you in the advisory unless you prefer to remain anonymous.
+You will be credited in the advisory unless you ask to remain anonymous.
 
 ## Scope
 
-**In scope:**
+**In scope:** Shard source code, slash command deployment, anything handling the bot token or Discord API responses.
 
-- the Shard source code in this repository
-- the slash command deployment flow and any code that handles the bot token, user input, or Discord API responses
-- documented configuration (`.env`, `src/env.ts`)
-
-**Out of scope:**
-
-- vulnerabilities in third-party dependencies — please report those upstream first. If a dep is unmaintained and we are exposed, we will accept the report.
-- misconfiguration of a self-hosted instance (leaked `.env`, exposed logs, missing OS updates, etc.)
-- social engineering of maintainers or contributors
-- denial-of-service caused solely by Discord rate limits or by abusing intended functionality at scale
-- issues only reproducible on heavily modified forks
+**Out of scope:** third-party dependencies (report upstream), misconfiguration of self-hosted instances, denial-of-service from abusing intended functionality at scale.
 
 ## Safe harbor
 
-We support responsible security research. If you act in good faith — avoid privacy violations, data destruction, and service disruption; do not exploit beyond what is necessary to demonstrate the issue; give us reasonable time to fix before public disclosure — we will not pursue or support any legal action against you.
-
-## Recognition
-
-Reporters of valid vulnerabilities are credited in the corresponding GitHub Security Advisory and release notes, unless they request otherwise.
+We support good-faith security research. If you avoid privacy violations and service disruption, don't exploit beyond what's needed to demonstrate the issue, and give us reasonable time to fix before public disclosure, we won't pursue legal action — and we're grateful for your help.
