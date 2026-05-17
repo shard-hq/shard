@@ -7,6 +7,7 @@ const EnvSchema = z.object({
     .min(50, { error: "DISCORD_TOKEN must be a valid Discord bot token" }),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("info"),
+  SYNC_EMOJIS: z.stringbool().default(true),
 });
 
 const parsed = EnvSchema.safeParse(Bun.env);

@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { env } from "../env";
 import { syncBadgeEmojis } from "../lib/badge-emojis";
 import { deployCommands } from "../lib/deploy-commands";
 import { logger } from "../lib/logger";
@@ -14,6 +15,7 @@ export default defineEvent({
       "client ready",
     );
     await deployCommands(client);
-    await syncBadgeEmojis(client);
+    if (env.SYNC_EMOJIS) await syncBadgeEmojis(client);
+    else logger.info("emoji sync skipped (SYNC_EMOJIS=false)");
   },
 });
