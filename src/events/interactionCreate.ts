@@ -23,12 +23,12 @@ export default defineEvent({
       );
       if (interaction.deferred || interaction.replied) {
         await interaction.followUp({
-          content: "Une erreur est survenue.",
+          content: "An error occurred.",
           flags: MessageFlags.Ephemeral,
         });
       } else {
         await interaction.reply({
-          content: "Une erreur est survenue.",
+          content: "An error occurred.",
           flags: MessageFlags.Ephemeral,
         });
       }
