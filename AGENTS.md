@@ -58,7 +58,7 @@ const client = new Client({
 ### Slash commands first
 
 - Global commands via `SlashCommandBuilder` and REST deployment (`@discordjs/rest` + `Routes.applicationCommands(...)`).
-- Deployment is **automatic on `ClientReady`** (`src/lib/deploy-commands.ts`), guarded by a SHA-256 hash cache stored in `.cache/commands.hash` to skip redundant API calls when commands haven't changed.
+- Deployment is **automatic on `ClientReady`** (`src/lib/deploy-commands.ts`) — runs on every startup.
 - No prefix commands (`!cmd`) unless there's a justified exception.
 
 ### Interactions — always reply, always `defer` if > 1s

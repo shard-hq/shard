@@ -18,7 +18,7 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 
 - **Self-hostable** — run it on your own infrastructure, own your data.
 - **Modern stack** — Bun, TypeScript strict, discord.js v14, ESLint type-checked.
-- **Auto-deployed commands** — slash commands register on startup with a SHA-256 hash cache that skips redundant API calls.
+- **Auto-deployed commands** — slash commands register globally on every startup.
 
 ## Quick start
 
