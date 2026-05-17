@@ -1,6 +1,6 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const CASE_TYPES = ["warn", "kick", "ban"] as const;
+export const CASE_TYPES = ["warn", "timeout", "kick", "ban"] as const;
 export type CaseType = (typeof CASE_TYPES)[number];
 
 export const cases = sqliteTable(
@@ -12,6 +12,7 @@ export const cases = sqliteTable(
     moderatorId: text("moderator_id").notNull(),
     type: text("type", { enum: CASE_TYPES }).notNull(),
     reason: text("reason"),
+    durationMs: integer("duration_ms"),
     createdAt: integer("created_at").notNull(),
   },
   (t) => [index("cases_guild_user_idx").on(t.guildId, t.userId)],

@@ -1,0 +1,1 @@
+ALTER TABLE `cases` ADD `duration_ms` integer;

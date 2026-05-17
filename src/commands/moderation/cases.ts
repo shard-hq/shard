@@ -13,22 +13,19 @@ import {
 import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db";
 import { cases, type Case, type CaseType } from "../../db/schema";
+import { formatDuration, TYPE_META } from "../../lib/moderation";
 import { defineCommand } from "../../types/command";
 
 const PAGE_SIZE = 5;
 const DEFAULT_COLOR = 0x5865f2;
 export const CASES_BUTTON_PREFIX = "cases";
 
-const TYPE_META: Record<
-  CaseType,
-  { emoji: string; label: string; color: number }
-> = {
-  warn: { emoji: "⚠️", label: "Warn", color: 0xfee75c },
-  kick: { emoji: "👢", label: "Kick", color: 0xfaa61a },
-  ban: { emoji: "🔨", label: "Ban", color: 0xed4245 },
-};
-
-const SEVERITY_ORDER: readonly CaseType[] = ["ban", "kick", "warn"] as const;
+const SEVERITY_ORDER: readonly CaseType[] = [
+  "ban",
+  "kick",
+  "timeout",
+  "warn",
+] as const;
 
 export interface CasesTarget {
   id: string;
@@ -52,8 +49,11 @@ const formatCaseField = (row: Case): { name: string; value: string } => {
   const meta = TYPE_META[row.type];
   const reason = row.reason ?? "*No reason provided*";
   const when = time(new Date(row.createdAt), TimestampStyles.RelativeTime);
+  const durationPart = row.durationMs
+    ? ` · ${formatDuration(row.durationMs)}`
+    : "";
   return {
-    name: `${meta.emoji} Case #${row.id} · ${meta.label}`,
+    name: `${meta.emoji} Case #${row.id} · ${meta.label}${durationPart}`,
     value: `${reason}\n-# By <@${row.moderatorId}> · ${when}`,
   };
 };
