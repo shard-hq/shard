@@ -11,7 +11,11 @@ export default defineEvent({
   async execute(client) {
     client.user.setPresence({ status: "dnd" });
     logger.info(
-      { user: client.user.tag, guilds: client.guilds.cache.size },
+      {
+        user: client.user.tag,
+        guilds: client.guilds.cache.size,
+        shards: client.ws.shards.size,
+      },
       "client ready",
     );
     await deployCommands(client);

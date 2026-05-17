@@ -99,6 +99,12 @@ Preferred type guards: `isChatInputCommand()`, `isButton()`, `isStringSelectMenu
 - Use discord.js's `REST` client; don't call the Discord API with raw `fetch`.
 - Don't mass-spam `fetch()` on collections — prefer the cache, or batch.
 
+### Sharding
+
+- We use **internal sharding** — one Bun process holds N WebSocket connections to Discord's gateway. The count is set via `SHARD_COUNT` in `.env` (default `1`). To handle growth past 2500 guilds, bump `SHARD_COUNT` (e.g. `5` covers up to ~12 500 guilds) and restart.
+- Cache is shared across all internal shards, so `client.guilds.cache.size` is the **total** guild count. No IPC, no `broadcastEval`, no per-shard gating. `clientReady` fires once when all shards are ready.
+- A single process holds every shard, so a crash takes the whole bot down. Docker's restart policy in `compose.yml` covers this. At ~25 000+ guilds, migrating to clustered sharding (e.g. `discord-hybrid-sharding`) becomes the next step — not before.
+
 ---
 
 ## 4. Project structure
