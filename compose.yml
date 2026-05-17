@@ -1,0 +1,12 @@
+services:
+  bot:
+    image: ghcr.io/shard-hq/shard:latest
+    container_name: shard
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - cache:/app/.cache
+
+volumes:
+  cache:

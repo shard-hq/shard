@@ -1,0 +1,24 @@
+# Build / lock artifacts
+node_modules
+dist
+out
+coverage
+*.tsbuildinfo
+.cache
+.eslintcache
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Source control / CI / IDE
+.git
+.github
+.idea
+.vscode
+.DS_Store
+
+# Logs
+*.log
+logs/
