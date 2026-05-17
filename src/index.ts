@@ -1,6 +1,7 @@
 import { env } from "./env";
 import { logger } from "./lib/logger";
 import { client } from "./client";
+import { closeDb } from "./db";
 import { loadCommands } from "./loaders/commands";
 import { loadEvents } from "./loaders/events";
 
@@ -11,6 +12,7 @@ const shutdown = async (signal: string): Promise<void> => {
   logger.info({ signal }, "shutting down");
   try {
     await client.destroy();
+    closeDb();
     process.exit(0);
   } catch (err) {
     logger.error({ err }, "error during shutdown");

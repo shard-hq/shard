@@ -9,7 +9,7 @@ export default defineEvent({
   name: Events.ClientReady,
   once: true,
   async execute(client) {
-    client.user.setPresence({ status: "dnd" });
+    client.user.setPresence({ status: "online" });
     logger.info(
       {
         user: client.user.tag,

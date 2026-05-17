@@ -17,6 +17,8 @@ ENV NODE_ENV=production
 COPY --from=install --chown=bun:bun /usr/src/app/node_modules ./node_modules
 COPY --chown=bun:bun . .
 
+RUN mkdir -p data && chown bun:bun data
+
 LABEL org.opencontainers.image.source="https://github.com/shard-hq/shard"
 LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
 LABEL org.opencontainers.image.description="Shard — self-hostable Discord bot"

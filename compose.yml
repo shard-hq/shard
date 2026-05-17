@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     volumes:
-      - cache:/app/.cache
+      - data:/usr/src/app/data
 
 volumes:
-  cache:
+  data:

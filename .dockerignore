@@ -7,6 +7,9 @@ coverage
 .cache
 .eslintcache
 
+# Runtime data
+data
+
 # Secrets
 .env
 .env.*
