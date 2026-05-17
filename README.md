@@ -50,7 +50,7 @@ git clone https://github.com/shard-hq/shard.git
 cd shard
 bun install
 cp .env.example .env  # add your DISCORD_TOKEN
-bun run dev
+bun run start
 ```
 
 Slash commands are deployed globally on startup. First-time propagation can take up to an hour; subsequent updates are near-instant.
@@ -59,8 +59,7 @@ Slash commands are deployed globally on startup. First-time propagation can take
 
 | Command | Description |
 |---|---|
-| `bun run dev` | Run with hot reload |
-| `bun run start` | Run in production mode |
+| `bun run start` | Run the bot |
 | `bun run typecheck` | Type-check the project |
 | `bun run lint` | ESLint check |
 | `bun run lint:fix` | ESLint auto-fix |

@@ -22,7 +22,7 @@ Closes #
 
 <!--
 How did you verify this works? Typecheck doesn't prove a command behaves correctly.
-At minimum, run the bot locally with `bun run dev` and exercise the change in Discord.
+At minimum, run the bot locally with `bun run start` and exercise the change in Discord.
 -->
 
 ## Checklist

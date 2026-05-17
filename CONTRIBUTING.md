@@ -46,7 +46,7 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
   bun test
   ```
 
-- Try the change in a real Discord server (`bun run dev`) — typecheck doesn't prove a command actually works.
+- Try the change in a real Discord server (`bun run start`) — typecheck doesn't prove a command actually works.
 - Please don't bypass git hooks (`--no-verify`). If a hook misbehaves, open an issue and we'll fix the hook.
 
 ## Coding standards

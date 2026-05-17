@@ -18,14 +18,6 @@ const shutdown = async (signal: string): Promise<void> => {
   }
 };
 
-const PROCESS_EVENTS = [
-  "SIGINT",
-  "SIGTERM",
-  "unhandledRejection",
-  "uncaughtException",
-] as const;
-for (const event of PROCESS_EVENTS) process.removeAllListeners(event);
-
 process.on("SIGINT", () => void shutdown("SIGINT"));
 process.on("SIGTERM", () => void shutdown("SIGTERM"));
 process.on("unhandledRejection", (reason: unknown) => {
