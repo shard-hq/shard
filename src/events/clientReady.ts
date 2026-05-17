@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { syncBadgeEmojis } from "../lib/badge-emojis";
 import { deployCommands } from "../lib/deploy-commands";
 import { logger } from "../lib/logger";
 import { defineEvent } from "../types/event";
@@ -13,5 +14,6 @@ export default defineEvent({
       "client ready",
     );
     await deployCommands(client);
+    await syncBadgeEmojis(client);
   },
 });
