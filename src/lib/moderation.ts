@@ -19,6 +19,22 @@ export const TYPE_META: Record<CaseType, CaseTypeMeta> = {
   timeout: { emoji: "🔇", label: "Timeout", verb: "Timed out", color: 0xfaa61a },
   kick: { emoji: "👢", label: "Kick", verb: "Kicked", color: 0xe67e22 },
   ban: { emoji: "🔨", label: "Ban", verb: "Banned", color: 0xed4245 },
+  unban: { emoji: "🔓", label: "Unban", verb: "Unbanned", color: 0x57f287 },
+  untimeout: {
+    emoji: "🔊",
+    label: "Untimeout",
+    verb: "Untimeout",
+    color: 0x57f287,
+  },
+};
+
+const DM_OPENING: Record<CaseType, (guildName: string) => string> = {
+  warn: (g) => `You have been **warned** in **${g}**.`,
+  timeout: (g) => `You have been **timed out** in **${g}**.`,
+  kick: (g) => `You have been **kicked** from **${g}**.`,
+  ban: (g) => `You have been **banned** from **${g}**.`,
+  unban: (g) => `Your ban has been **lifted** in **${g}**.`,
+  untimeout: (g) => `Your timeout has been **removed** in **${g}**.`,
 };
 
 export const formatDuration = (ms: number): string => {
@@ -89,9 +105,8 @@ export const notifyTarget = async (
   user: User,
   payload: NotifyPayload,
 ): Promise<boolean> => {
-  const verb = TYPE_META[payload.type].verb.toLowerCase();
   const lines = [
-    `You have been **${verb}** in **${payload.guild.name}**.`,
+    DM_OPENING[payload.type](payload.guild.name),
     payload.reason
       ? `**Reason:** ${payload.reason}`
       : "*No reason provided.*",

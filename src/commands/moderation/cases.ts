@@ -25,6 +25,8 @@ const SEVERITY_ORDER: readonly CaseType[] = [
   "kick",
   "timeout",
   "warn",
+  "unban",
+  "untimeout",
 ] as const;
 
 export interface CasesTarget {

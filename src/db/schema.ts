@@ -1,6 +1,13 @@
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const CASE_TYPES = ["warn", "timeout", "kick", "ban"] as const;
+export const CASE_TYPES = [
+  "warn",
+  "timeout",
+  "kick",
+  "ban",
+  "unban",
+  "untimeout",
+] as const;
 export type CaseType = (typeof CASE_TYPES)[number];
 
 export const cases = sqliteTable(
