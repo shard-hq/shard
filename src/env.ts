@@ -8,7 +8,6 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("info"),
   SYNC_EMOJIS: z.stringbool().default(true),
-  SHARD_COUNT: z.coerce.number().int().positive().default(1),
 });
 
 const parsed = EnvSchema.safeParse(Bun.env);

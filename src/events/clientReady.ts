@@ -14,7 +14,6 @@ export default defineEvent({
       {
         user: client.user.tag,
         guilds: client.guilds.cache.size,
-        shards: client.ws.shards.size,
       },
       "client ready",
     );
