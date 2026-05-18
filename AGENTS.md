@@ -197,3 +197,16 @@ drizzle.config.ts         # drizzle-kit config (schema → migrations folder)
 - **No `--no-verify`** on commits, no hook skipping.
 - Before declaring a feature done: `bun test` + run the bot locally and verify the actual interaction in Discord. Typecheck doesn't prove a command works.
 - Small commits, imperative present-tense messages in English or French (stay consistent within the repo).
+
+---
+
+## 10. Upgrades & self-hosters
+
+This bot is self-hosted. Every commit ships to live instances someone is running — assume a `git pull` + restart will happen. Before merging, ask: *"if someone updates their running instance to this commit, what breaks?"* No silent breakage, no required manual ops on their side beyond what's documented.
+
+- **DB schema changes** ship with a Drizzle migration in the same commit (see §8). `runMigrations()` runs before login, so a bad migration crashes early instead of mid-flight.
+- **New stateful features need a startup backfill**: events (`GuildCreate`, `GuildMemberAdd`, …) only fire for *new* arrivals from now on. When a feature maintains per-X DB state (guild, user, channel…), also iterate the relevant cache on `ClientReady` with an idempotent upsert (`onConflictDoNothing`) — otherwise pre-existing data and offline-adds are silently skipped.
+- **New env vars** either have a `.default(...)` in `src/env.ts` zod schema, or fail fast with a clear message. Never let an undefined value sneak two layers deep before crashing.
+- **Removed / renamed schema** doesn't get backwards-compat shims (per §5), but the migration must explicitly drop or rename so leftover rows don't confuse new code.
+- **Behavioral breaking changes** (command rename, new required permission, data wipe, default flip…) get called out in the PR body and end up in the auto-generated release notes via Conventional Commits (`feat!:` / `BREAKING CHANGE:` footer).
+- **New optional intents or scopes** that the Developer Portal must enable: document in the commit body and README, and make the code degrade gracefully when the intent isn't granted.
