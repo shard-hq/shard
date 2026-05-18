@@ -3,10 +3,12 @@ import {
   MessageFlags,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  type UserContextMenuCommandInteraction,
 } from "discord.js";
 import { buttonRegistry } from "../lib/button-registry";
 import { commandRegistry } from "../lib/command-registry";
 import { logger } from "../lib/logger";
+import { userCommandRegistry } from "../lib/user-command-registry";
 import { defineEvent } from "../types/event";
 
 const ERROR_PAYLOAD = {
@@ -15,7 +17,10 @@ const ERROR_PAYLOAD = {
 } as const;
 
 const respondError = async (
-  interaction: ChatInputCommandInteraction | ButtonInteraction,
+  interaction:
+    | ChatInputCommandInteraction
+    | ButtonInteraction
+    | UserContextMenuCommandInteraction,
 ): Promise<void> => {
   try {
     if (interaction.deferred || interaction.replied) {
@@ -51,6 +56,27 @@ export default defineEvent({
         logger.error(
           { err, customId: interaction.customId, user: interaction.user.id },
           "button handler failed",
+        );
+        await respondError(interaction);
+      }
+      return;
+    }
+
+    if (interaction.isUserContextMenuCommand()) {
+      const command = userCommandRegistry.get(interaction.commandName);
+      if (!command) {
+        logger.warn(
+          { command: interaction.commandName },
+          "unknown user command",
+        );
+        return;
+      }
+      try {
+        await command.execute(interaction);
+      } catch (err) {
+        logger.error(
+          { err, command: interaction.commandName, user: interaction.user.id },
+          "user command failed",
         );
         await respondError(interaction);
       }

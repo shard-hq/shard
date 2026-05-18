@@ -2,9 +2,13 @@ import { type Client, REST, Routes } from "discord.js";
 import { env } from "../env";
 import { commandRegistry } from "./command-registry";
 import { logger } from "./logger";
+import { userCommandRegistry } from "./user-command-registry";
 
 export const deployCommands = async (client: Client<true>): Promise<void> => {
-  const body = Array.from(commandRegistry.values()).map((c) => c.data.toJSON());
+  const body = [
+    ...Array.from(commandRegistry.values()).map((c) => c.data.toJSON()),
+    ...Array.from(userCommandRegistry.values()).map((c) => c.data.toJSON()),
+  ];
   if (body.length === 0) {
     logger.warn("no commands to deploy");
     return;
