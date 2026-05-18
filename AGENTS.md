@@ -174,7 +174,7 @@ drizzle.config.ts         # drizzle-kit config (schema → migrations folder)
 
 ## 7. Tests
 
-- `bun test` — colocate: `foo.ts` ↔ `foo.test.ts`.
+- `bun test` — tests live in `tests/`, mirroring `src/`'s layout (e.g. `src/lib/moderation.ts` ↔ `tests/lib/moderation.test.ts`). Keeps the source tree free of test noise and lets us exclude `tests/` from the Docker image cleanly.
 - Prioritize testing pure logic (formatting, parsing, services). Interaction handlers can be tested by mocking only the minimal `interaction` object needed.
 - No test should hit the real Discord API.
 
