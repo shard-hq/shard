@@ -12,7 +12,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../../db";
 import { cases } from "../../db/schema";
 import { sendModLog } from "../../lib/mod-log";
-import { TYPE_META } from "../../lib/moderation";
+import { formatDuration, TYPE_META } from "../../lib/moderation";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const DELETE_COLOR = 0x99aab5;
@@ -70,6 +70,76 @@ const handleDelete = async (
     });
 
   await sendModLog(interaction.guild, embed);
+};
+
+const handleView = async (
+  interaction: ChatInputCommandInteraction<"cached">,
+): Promise<void> => {
+  const caseId = interaction.options.getInteger("id", true);
+
+  const existing = db
+    .select()
+    .from(cases)
+    .where(and(eq(cases.id, caseId), eq(cases.guildId, interaction.guildId)))
+    .get();
+
+  if (!existing) {
+    await interaction.reply({
+      content: `Case #${caseId} not found in this server.`,
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  const target = await interaction.client.users
+    .fetch(existing.userId)
+    .catch(() => null);
+
+  const meta = TYPE_META[existing.type];
+  const reason = existing.reason ?? "*No reason provided*";
+  const createdAt = new Date(existing.createdAt);
+  const userValue = target
+    ? `${target.toString()} · \`${target.username}\``
+    : `<@${existing.userId}>`;
+
+  const embed = new EmbedBuilder()
+    .setColor(meta.color)
+    .setTitle(`${meta.emoji} Case #${existing.id} · ${meta.label}`)
+    .addFields(
+      { name: "User", value: userValue, inline: true },
+      {
+        name: "Moderator",
+        value: `<@${existing.moderatorId}>`,
+        inline: true,
+      },
+    );
+
+  if (existing.durationMs !== null) {
+    embed.addFields({
+      name: "Duration",
+      value: formatDuration(existing.durationMs),
+      inline: true,
+    });
+  }
+
+  embed
+    .addFields(
+      {
+        name: "Date",
+        value: `${time(createdAt, TimestampStyles.LongDate)} · ${time(createdAt, TimestampStyles.ShortTime)}\n${time(createdAt, TimestampStyles.RelativeTime)}`,
+      },
+      { name: "Reason", value: reason.slice(0, 1024) },
+    )
+    .setFooter({ text: `User ID · ${existing.userId}` });
+
+  if (target) {
+    embed.setThumbnail(target.displayAvatarURL({ size: 256 }));
+  }
+
+  await interaction.reply({
+    embeds: [embed],
+    flags: MessageFlags.Ephemeral,
+  });
 };
 
 const handleEdit = async (
@@ -144,6 +214,18 @@ export default defineCommand({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand((sub) =>
       sub
+        .setName("view")
+        .setDescription("View the details of a moderation case.")
+        .addIntegerOption((opt) =>
+          opt
+            .setName("id")
+            .setDescription("The case number to view.")
+            .setMinValue(1)
+            .setRequired(true),
+        ),
+    )
+    .addSubcommand((sub) =>
+      sub
         .setName("delete")
         .setDescription("Delete a moderation case.")
         .addIntegerOption((opt) =>
@@ -177,6 +259,7 @@ export default defineCommand({
     if (!interaction.inCachedGuild()) return;
 
     const sub = interaction.options.getSubcommand(true);
+    if (sub === "view") return handleView(interaction);
     if (sub === "delete") return handleDelete(interaction);
     if (sub === "edit") return handleEdit(interaction);
   },
