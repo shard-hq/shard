@@ -15,7 +15,7 @@
 Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](https://www.typescriptlang.org), and [discord.js v14](https://discord.js.org).
 
 > [!NOTE]
-> Shard is still in active development — every bit of feedback, every bug report, and every contribution genuinely moves the project forward. [Open a discussion](https://github.com/shard-hq/shard/discussions) or [file an issue](https://github.com/shard-hq/shard/issues) — we'd love to hear from you.
+> Shard is still in active development — every bit of feedback, every bug report, and every contribution genuinely moves the project forward. [Join the Discord](https://discord.gg/gCCfErBEKr) or [file an issue](https://github.com/shard-hq/shard/issues) — we'd love to hear from you.
 
 ## Features
 
@@ -113,7 +113,7 @@ Slash commands are deployed globally on startup. First-time propagation can take
 
 ## Contributing
 
-Contributions of any size are welcome — typo fixes count just as much as new commands. Have a look at [CONTRIBUTING.md](CONTRIBUTING.md) to get started, or open a [discussion](https://github.com/shard-hq/shard/discussions) if you want to chat through an idea first.
+Contributions of any size are welcome — typo fixes count just as much as new commands. Have a look at [CONTRIBUTING.md](CONTRIBUTING.md) to get started, or [drop in the Discord](https://discord.gg/gCCfErBEKr) if you want to chat through an idea first.
 
 ## License
 
