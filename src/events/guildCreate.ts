@@ -9,6 +9,7 @@ import {
   SeparatorSpacingSize,
   TextDisplayBuilder,
 } from "discord.js";
+import { ensureGuildSettings } from "../lib/guild-settings";
 import { logger } from "../lib/logger";
 import { defineEvent } from "../types/event";
 
@@ -18,6 +19,8 @@ const ISSUES_URL = `${REPO_URL}/issues/new/choose`;
 export default defineEvent({
   name: Events.GuildCreate,
   async execute(guild) {
+    ensureGuildSettings(guild.id);
+
     let owner;
     try {
       owner = await guild.fetchOwner();
