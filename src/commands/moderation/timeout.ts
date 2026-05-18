@@ -1,17 +1,16 @@
 import {
-  EmbedBuilder,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
 import {
+  buildModerationEmbed,
   checkGuards,
   formatAuditReason,
   formatDuration,
   notifyTarget,
   recordCase,
-  TYPE_META,
 } from "../../lib/moderation";
 import { defineCommand } from "../../types/command";
 
@@ -84,13 +83,6 @@ export default defineCommand({
       return;
     }
 
-    const dmDelivered = await notifyTarget(target, {
-      guild: interaction.guild,
-      type: "timeout",
-      reason,
-      durationMs,
-    });
-
     try {
       await member.timeout(
         durationMs,
@@ -104,6 +96,15 @@ export default defineCommand({
       throw err;
     }
 
+    // DM after the action: the user is still in the guild, so the DM is accurate
+    // (no false notification if Discord refused the timeout).
+    const dmDelivered = await notifyTarget(target, {
+      guild: interaction.guild,
+      type: "timeout",
+      reason,
+      durationMs,
+    });
+
     const caseId = recordCase({
       guildId: interaction.guildId,
       userId: target.id,
@@ -113,18 +114,14 @@ export default defineCommand({
       durationMs,
     });
 
-    const meta = TYPE_META.timeout;
-    const embed = new EmbedBuilder()
-      .setColor(meta.color)
-      .setTitle(
-        `${meta.emoji} ${meta.verb} ${target.username} (${formatDuration(durationMs)})`,
-      )
-      .setDescription(
-        reason ? `**Reason:** ${reason}` : "*No reason provided.*",
-      )
-      .setFooter({
-        text: `Case #${caseId}${dmDelivered ? "" : " · DM not delivered"}`,
-      });
+    const embed = buildModerationEmbed({
+      type: "timeout",
+      target,
+      reason,
+      caseId,
+      dmNote: dmDelivered ? "" : " · DM not delivered",
+      titleExtra: ` (${formatDuration(durationMs)})`,
+    });
 
     await interaction.reply({
       embeds: [embed],

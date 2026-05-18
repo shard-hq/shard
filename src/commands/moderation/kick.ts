@@ -1,16 +1,15 @@
 import {
-  EmbedBuilder,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
 import {
+  buildModerationEmbed,
   checkGuards,
   formatAuditReason,
   notifyTarget,
   recordCase,
-  TYPE_META,
 } from "../../lib/moderation";
 import { defineCommand } from "../../types/command";
 
@@ -60,6 +59,7 @@ export default defineCommand({
       return;
     }
 
+    // DM before the kick: after kick, DM only works if the bot shares another guild with the user.
     const dmDelivered = await notifyTarget(target, {
       guild: interaction.guild,
       type: "kick",
@@ -84,16 +84,13 @@ export default defineCommand({
       reason,
     });
 
-    const meta = TYPE_META.kick;
-    const embed = new EmbedBuilder()
-      .setColor(meta.color)
-      .setTitle(`${meta.emoji} ${meta.verb} ${target.username}`)
-      .setDescription(
-        reason ? `**Reason:** ${reason}` : "*No reason provided.*",
-      )
-      .setFooter({
-        text: `Case #${caseId}${dmDelivered ? "" : " · DM not delivered"}`,
-      });
+    const embed = buildModerationEmbed({
+      type: "kick",
+      target,
+      reason,
+      caseId,
+      dmNote: dmDelivered ? "" : " · DM not delivered",
+    });
 
     await interaction.reply({
       embeds: [embed],

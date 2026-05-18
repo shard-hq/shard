@@ -1,14 +1,14 @@
 import {
-  EmbedBuilder,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
+import { logger } from "../../lib/logger";
 import {
+  buildModerationEmbed,
   formatAuditReason,
   recordCase,
-  TYPE_META,
 } from "../../lib/moderation";
 import { defineCommand } from "../../types/command";
 
@@ -41,7 +41,11 @@ export default defineCommand({
         target.id,
         formatAuditReason(interaction.user, reason),
       );
-    } catch {
+    } catch (err) {
+      logger.warn(
+        { err, target: target.id, guild: interaction.guildId },
+        "unban refused by Discord",
+      );
       await interaction.reply({
         content: "That user is not banned, or I can't unban them.",
         flags: MessageFlags.Ephemeral,
@@ -57,14 +61,12 @@ export default defineCommand({
       reason,
     });
 
-    const meta = TYPE_META.unban;
-    const embed = new EmbedBuilder()
-      .setColor(meta.color)
-      .setTitle(`${meta.emoji} ${meta.verb} ${target.username}`)
-      .setDescription(
-        reason ? `**Reason:** ${reason}` : "*No reason provided.*",
-      )
-      .setFooter({ text: `Case #${caseId}` });
+    const embed = buildModerationEmbed({
+      type: "unban",
+      target,
+      reason,
+      caseId,
+    });
 
     await interaction.reply({
       embeds: [embed],

@@ -1,4 +1,5 @@
 import {
+  EmbedBuilder,
   type ChatInputCommandInteraction,
   type Guild,
   type GuildMember,
@@ -23,7 +24,7 @@ export const TYPE_META: Record<CaseType, CaseTypeMeta> = {
   untimeout: {
     emoji: "🔊",
     label: "Untimeout",
-    verb: "Untimeout",
+    verb: "Removed timeout from",
     color: 0x57f287,
   },
 };
@@ -38,13 +39,13 @@ const DM_OPENING: Record<CaseType, (guildName: string) => string> = {
 };
 
 export const formatDuration = (ms: number): string => {
-  const s = Math.round(ms / 1000);
+  const s = Math.floor(ms / 1000);
   if (s < 60) return `${s}s`;
-  const m = Math.round(s / 60);
+  const m = Math.floor(s / 60);
   if (m < 60) return `${m}m`;
-  const h = Math.round(m / 60);
+  const h = Math.floor(m / 60);
   if (h < 24) return `${h}h`;
-  const d = Math.round(h / 24);
+  const d = Math.floor(h / 24);
   return `${d}d`;
 };
 
@@ -123,6 +124,28 @@ export const notifyTarget = async (
   } catch {
     return false;
   }
+};
+
+export interface ModerationEmbedInput {
+  type: CaseType;
+  target: User;
+  reason: string | null;
+  caseId: number;
+  dmNote?: string;
+  titleExtra?: string;
+}
+
+export const buildModerationEmbed = (input: ModerationEmbedInput): EmbedBuilder => {
+  const meta = TYPE_META[input.type];
+  return new EmbedBuilder()
+    .setColor(meta.color)
+    .setTitle(
+      `${meta.emoji} ${meta.verb} ${input.target.username}${input.titleExtra ?? ""}`,
+    )
+    .setDescription(
+      input.reason ? `**Reason:** ${input.reason}` : "*No reason provided.*",
+    )
+    .setFooter({ text: `Case #${input.caseId}${input.dmNote ?? ""}` });
 };
 
 export interface RecordCaseInput {

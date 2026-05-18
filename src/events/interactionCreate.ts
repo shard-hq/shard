@@ -1,8 +1,35 @@
-import { Events, MessageFlags } from "discord.js";
+import {
+  Events,
+  MessageFlags,
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
+} from "discord.js";
 import { buttonRegistry } from "../lib/button-registry";
 import { commandRegistry } from "../lib/command-registry";
 import { logger } from "../lib/logger";
 import { defineEvent } from "../types/event";
+
+const ERROR_PAYLOAD = {
+  content: "An error occurred.",
+  flags: MessageFlags.Ephemeral,
+} as const;
+
+const respondError = async (
+  interaction: ChatInputCommandInteraction | ButtonInteraction,
+): Promise<void> => {
+  try {
+    if (interaction.deferred || interaction.replied) {
+      await interaction.followUp(ERROR_PAYLOAD);
+    } else {
+      await interaction.reply(ERROR_PAYLOAD);
+    }
+  } catch (err) {
+    logger.error(
+      { err, interactionId: interaction.id },
+      "failed to send error response",
+    );
+  }
+};
 
 export default defineEvent({
   name: Events.InteractionCreate,
@@ -25,6 +52,7 @@ export default defineEvent({
           { err, customId: interaction.customId, user: interaction.user.id },
           "button handler failed",
         );
+        await respondError(interaction);
       }
       return;
     }
@@ -44,17 +72,7 @@ export default defineEvent({
         { err, command: interaction.commandName, user: interaction.user.id },
         "command failed",
       );
-      if (interaction.deferred || interaction.replied) {
-        await interaction.followUp({
-          content: "An error occurred.",
-          flags: MessageFlags.Ephemeral,
-        });
-      } else {
-        await interaction.reply({
-          content: "An error occurred.",
-          flags: MessageFlags.Ephemeral,
-        });
-      }
+      await respondError(interaction);
     }
   },
 });

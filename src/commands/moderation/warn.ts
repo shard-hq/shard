@@ -1,15 +1,14 @@
 import {
-  EmbedBuilder,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
 import {
+  buildModerationEmbed,
   checkGuards,
   notifyTarget,
   recordCase,
-  TYPE_META,
 } from "../../lib/moderation";
 import { defineCommand } from "../../types/command";
 
@@ -65,16 +64,13 @@ export default defineCommand({
       reason,
     });
 
-    const meta = TYPE_META.warn;
-    const embed = new EmbedBuilder()
-      .setColor(meta.color)
-      .setTitle(`${meta.emoji} ${meta.verb} ${target.username}`)
-      .setDescription(
-        reason ? `**Reason:** ${reason}` : "*No reason provided.*",
-      )
-      .setFooter({
-        text: `Case #${caseId}${dmDelivered ? "" : " · DM not delivered"}`,
-      });
+    const embed = buildModerationEmbed({
+      type: "warn",
+      target,
+      reason,
+      caseId,
+      dmNote: dmDelivered ? "" : " · DM not delivered",
+    });
 
     await interaction.reply({
       embeds: [embed],

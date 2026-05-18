@@ -1,16 +1,15 @@
 import {
-  EmbedBuilder,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
 import {
+  buildModerationEmbed,
   checkGuards,
   formatAuditReason,
   notifyTarget,
   recordCase,
-  TYPE_META,
 } from "../../lib/moderation";
 import { defineCommand } from "../../types/command";
 
@@ -70,6 +69,7 @@ export default defineCommand({
       return;
     }
 
+    // DM before the ban: once banned, the user can't be DM'd reliably.
     const dmDelivered = member
       ? await notifyTarget(target, {
           guild: interaction.guild,
@@ -99,19 +99,18 @@ export default defineCommand({
       reason,
     });
 
-    const meta = TYPE_META.ban;
     const dmNote = !member
       ? " · User not in server"
       : dmDelivered
         ? ""
         : " · DM not delivered";
-    const embed = new EmbedBuilder()
-      .setColor(meta.color)
-      .setTitle(`${meta.emoji} ${meta.verb} ${target.username}`)
-      .setDescription(
-        reason ? `**Reason:** ${reason}` : "*No reason provided.*",
-      )
-      .setFooter({ text: `Case #${caseId}${dmNote}` });
+    const embed = buildModerationEmbed({
+      type: "ban",
+      target,
+      reason,
+      caseId,
+      dmNote,
+    });
 
     await interaction.reply({
       embeds: [embed],
