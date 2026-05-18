@@ -5,6 +5,21 @@ import type {
   SlashCommandSubcommandsOnlyBuilder,
 } from "discord.js";
 
+export const CommandCategory = {
+  Utility: "utility",
+  Moderation: "moderation",
+} as const;
+export type CommandCategory =
+  (typeof CommandCategory)[keyof typeof CommandCategory];
+
+export const CATEGORY_LABEL: Record<CommandCategory, string> = {
+  utility: "Utility",
+  moderation: "Moderation",
+};
+
+export const isCommandCategory = (value: unknown): value is CommandCategory =>
+  typeof value === "string" && value in CATEGORY_LABEL;
+
 export type CommandData =
   | SlashCommandBuilder
   | SlashCommandOptionsOnlyBuilder
@@ -12,6 +27,7 @@ export type CommandData =
 
 export interface Command {
   data: CommandData;
+  category: CommandCategory;
   execute(interaction: ChatInputCommandInteraction): Promise<void> | void;
 }
 

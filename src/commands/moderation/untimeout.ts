@@ -11,9 +11,10 @@ import {
   notifyTarget,
   recordCase,
 } from "../../lib/moderation";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 export default defineCommand({
+  category: CommandCategory.Moderation,
   data: new SlashCommandBuilder()
     .setName("untimeout")
     .setDescription("Remove a timeout from a user.")

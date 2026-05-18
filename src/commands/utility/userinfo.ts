@@ -12,7 +12,7 @@ import {
   time,
   type User,
 } from "discord.js";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 import { badgeEmoji } from "../../lib/badge-emojis";
 
 const MAX_ROLES_DISPLAYED = 25;
@@ -78,6 +78,7 @@ const formatMemberStatus = (member: GuildMember): string => {
 };
 
 export default defineCommand({
+  category: CommandCategory.Utility,
   data: new SlashCommandBuilder()
     .setName("userinfo")
     .setDescription("Display information about a user.")

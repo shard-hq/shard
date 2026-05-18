@@ -1,7 +1,8 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 export default defineCommand({
+  category: CommandCategory.Utility,
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with pong and the WebSocket latency."),

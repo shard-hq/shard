@@ -2,15 +2,20 @@ import path from "node:path";
 import { Glob } from "bun";
 import { commandRegistry } from "../lib/command-registry";
 import { logger } from "../lib/logger";
-import type { Command } from "../types/command";
+import { isCommandCategory, type Command } from "../types/command";
 
 const COMMANDS_DIR = path.resolve(import.meta.dir, "../commands");
 
 const isCommand = (value: unknown): value is Command => {
   if (typeof value !== "object" || value === null) return false;
-  const obj = value as { data?: unknown; execute?: unknown };
+  const obj = value as {
+    data?: unknown;
+    execute?: unknown;
+    category?: unknown;
+  };
   if (typeof obj.execute !== "function") return false;
   if (typeof obj.data !== "object" || obj.data === null) return false;
+  if (!isCommandCategory(obj.category)) return false;
   const data = obj.data as { name?: unknown };
   return typeof data.name === "string";
 };

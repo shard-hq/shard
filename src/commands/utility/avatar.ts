@@ -8,7 +8,7 @@ import {
   SlashCommandBuilder,
   type User,
 } from "discord.js";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 const AVATAR_SIZE = 1024;
 const DEFAULT_ACCENT = 0x5865f2;
@@ -20,6 +20,7 @@ const resolveAccent = (member: GuildMember | null, user: User): number => {
 };
 
 export default defineCommand({
+  category: CommandCategory.Utility,
   data: new SlashCommandBuilder()
     .setName("avatar")
     .setDescription("Display a user's avatar in high resolution.")

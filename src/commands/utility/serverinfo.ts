@@ -16,7 +16,7 @@ import {
   time,
   type Guild,
 } from "discord.js";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 const ICON_SIZE = 256;
 const BANNER_SIZE = 1024;
@@ -100,6 +100,7 @@ const formatEmojis = (guild: Guild): string => {
 };
 
 export default defineCommand({
+  category: CommandCategory.Utility,
   data: new SlashCommandBuilder()
     .setName("serverinfo")
     .setDescription("Display information about this server.")

@@ -11,7 +11,7 @@ import {
   notifyTarget,
   recordCase,
 } from "../../lib/moderation";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 const DELETE_CHOICES = [
   { name: "Don't delete", value: 0 },
@@ -23,6 +23,7 @@ const DELETE_CHOICES = [
 ];
 
 export default defineCommand({
+  category: CommandCategory.Moderation,
   data: new SlashCommandBuilder()
     .setName("ban")
     .setDescription("Ban a user from the server.")

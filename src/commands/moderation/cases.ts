@@ -14,7 +14,7 @@ import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db";
 import { cases, type Case, type CaseType } from "../../db/schema";
 import { formatDuration, TYPE_META } from "../../lib/moderation";
-import { defineCommand } from "../../types/command";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 const PAGE_SIZE = 5;
 const DEFAULT_COLOR = 0x5865f2;
@@ -131,6 +131,7 @@ export const buildCasesPage = (
 };
 
 export default defineCommand({
+  category: CommandCategory.Moderation,
   data: new SlashCommandBuilder()
     .setName("cases")
     .setDescription("List moderation cases for a user.")
