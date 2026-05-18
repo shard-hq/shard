@@ -4,13 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import {
-  buildModerationEmbed,
-  checkGuards,
-  formatAuditReason,
-  notifyTarget,
-  recordCase,
-} from "../../lib/moderation";
+import { performKick } from "../../lib/mod-actions";
 import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
@@ -42,63 +36,20 @@ export default defineCommand({
       .fetch(target.id)
       .catch(() => null);
 
-    if (!member) {
+    const result = await performKick({ interaction, target, member, reason });
+
+    if (!result.ok) {
       await interaction.reply({
-        content: "That user is not in this server.",
+        content: result.error,
         flags: MessageFlags.Ephemeral,
       });
       return;
     }
-
-    const guardError = checkGuards(interaction, target, member, {
-      requireBotHierarchy: true,
-    });
-    if (guardError) {
-      await interaction.reply({
-        content: guardError,
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    // DM before the kick: after kick, DM only works if the bot shares another guild with the user.
-    const dmDelivered = await notifyTarget(target, {
-      guild: interaction.guild,
-      type: "kick",
-      reason,
-    });
-
-    try {
-      await member.kick(formatAuditReason(interaction.user, reason));
-    } catch (err) {
-      await interaction.reply({
-        content: "Failed to kick this user (Discord refused the action).",
-        flags: MessageFlags.Ephemeral,
-      });
-      throw err;
-    }
-
-    const caseId = recordCase({
-      guildId: interaction.guildId,
-      userId: target.id,
-      moderatorId: interaction.user.id,
-      type: "kick",
-      reason,
-    });
-
-    const embed = buildModerationEmbed({
-      type: "kick",
-      target,
-      moderator: interaction.user,
-      reason,
-      caseId,
-      dmNote: dmDelivered ? "" : " · DM not delivered",
-    });
 
     await interaction.reply({
-      embeds: [embed],
+      embeds: [result.embed],
       flags: MessageFlags.Ephemeral,
     });
-    await sendModLog(interaction.guild, embed);
+    await sendModLog(interaction.guild, result.embed);
   },
 });

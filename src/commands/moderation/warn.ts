@@ -4,12 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import {
-  buildModerationEmbed,
-  checkGuards,
-  notifyTarget,
-  recordCase,
-} from "../../lib/moderation";
+import { performWarn } from "../../lib/mod-actions";
 import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
@@ -41,44 +36,20 @@ export default defineCommand({
       .fetch(target.id)
       .catch(() => null);
 
-    const guardError = checkGuards(interaction, target, member, {
-      requireBotHierarchy: false,
-    });
-    if (guardError) {
+    const result = await performWarn({ interaction, target, member, reason });
+
+    if (!result.ok) {
       await interaction.reply({
-        content: guardError,
+        content: result.error,
         flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
-    const dmDelivered = await notifyTarget(target, {
-      guild: interaction.guild,
-      type: "warn",
-      reason,
-    });
-
-    const caseId = recordCase({
-      guildId: interaction.guildId,
-      userId: target.id,
-      moderatorId: interaction.user.id,
-      type: "warn",
-      reason,
-    });
-
-    const embed = buildModerationEmbed({
-      type: "warn",
-      target,
-      moderator: interaction.user,
-      reason,
-      caseId,
-      dmNote: dmDelivered ? "" : " · DM not delivered",
-    });
-
     await interaction.reply({
-      embeds: [embed],
+      embeds: [result.embed],
       flags: MessageFlags.Ephemeral,
     });
-    await sendModLog(interaction.guild, embed);
+    await sendModLog(interaction.guild, result.embed);
   },
 });

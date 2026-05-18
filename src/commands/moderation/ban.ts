@@ -4,13 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import {
-  buildModerationEmbed,
-  checkGuards,
-  formatAuditReason,
-  notifyTarget,
-  recordCase,
-} from "../../lib/moderation";
+import { performBan } from "../../lib/mod-actions";
 import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
@@ -60,65 +54,26 @@ export default defineCommand({
       .fetch(target.id)
       .catch(() => null);
 
-    const guardError = checkGuards(interaction, target, member, {
-      requireBotHierarchy: true,
+    const result = await performBan({
+      interaction,
+      target,
+      member,
+      reason,
+      deleteMessageSeconds,
     });
-    if (guardError) {
+
+    if (!result.ok) {
       await interaction.reply({
-        content: guardError,
+        content: result.error,
         flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
-    // DM before the ban: once banned, the user can't be DM'd reliably.
-    const dmDelivered = member
-      ? await notifyTarget(target, {
-          guild: interaction.guild,
-          type: "ban",
-          reason,
-        })
-      : false;
-
-    try {
-      await interaction.guild.members.ban(target.id, {
-        reason: formatAuditReason(interaction.user, reason),
-        deleteMessageSeconds,
-      });
-    } catch (err) {
-      await interaction.reply({
-        content: "Failed to ban this user (Discord refused the action).",
-        flags: MessageFlags.Ephemeral,
-      });
-      throw err;
-    }
-
-    const caseId = recordCase({
-      guildId: interaction.guildId,
-      userId: target.id,
-      moderatorId: interaction.user.id,
-      type: "ban",
-      reason,
-    });
-
-    const dmNote = !member
-      ? " · User not in server"
-      : dmDelivered
-        ? ""
-        : " · DM not delivered";
-    const embed = buildModerationEmbed({
-      type: "ban",
-      target,
-      moderator: interaction.user,
-      reason,
-      caseId,
-      dmNote,
-    });
-
     await interaction.reply({
-      embeds: [embed],
+      embeds: [result.embed],
       flags: MessageFlags.Ephemeral,
     });
-    await sendModLog(interaction.guild, embed);
+    await sendModLog(interaction.guild, result.embed);
   },
 });

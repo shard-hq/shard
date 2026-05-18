@@ -3,11 +3,13 @@ import {
   MessageFlags,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  type ModalSubmitInteraction,
   type UserContextMenuCommandInteraction,
 } from "discord.js";
 import { buttonRegistry } from "../lib/button-registry";
 import { commandRegistry } from "../lib/command-registry";
 import { logger } from "../lib/logger";
+import { modalRegistry } from "../lib/modal-registry";
 import { userCommandRegistry } from "../lib/user-command-registry";
 import { defineEvent } from "../types/event";
 
@@ -20,7 +22,8 @@ const respondError = async (
   interaction:
     | ChatInputCommandInteraction
     | ButtonInteraction
-    | UserContextMenuCommandInteraction,
+    | UserContextMenuCommandInteraction
+    | ModalSubmitInteraction,
 ): Promise<void> => {
   try {
     if (interaction.deferred || interaction.replied) {
@@ -56,6 +59,29 @@ export default defineEvent({
         logger.error(
           { err, customId: interaction.customId, user: interaction.user.id },
           "button handler failed",
+        );
+        await respondError(interaction);
+      }
+      return;
+    }
+
+    if (interaction.isModalSubmit()) {
+      const [prefix] = interaction.customId.split(":");
+      if (!prefix) return;
+      const handler = modalRegistry.get(prefix);
+      if (!handler) {
+        logger.warn(
+          { customId: interaction.customId },
+          "unknown modal prefix",
+        );
+        return;
+      }
+      try {
+        await handler.execute(interaction);
+      } catch (err) {
+        logger.error(
+          { err, customId: interaction.customId, user: interaction.user.id },
+          "modal handler failed",
         );
         await respondError(interaction);
       }

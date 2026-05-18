@@ -38,7 +38,6 @@ const BADGE_LABELS: readonly BadgeDef[] = [
   { flag: UserFlags.BugHunterLevel2, emojiName: "discordbughunter2", label: "Bug Hunter Lv. 2" },
   { flag: UserFlags.VerifiedDeveloper, emojiName: "discordbotdev", label: "Early Bot Developer" },
   { flag: UserFlags.PremiumEarlySupporter, emojiName: "discordearlysupporter", label: "Early Supporter" },
-  { flag: UserFlags.ActiveDeveloper, emojiName: "activedeveloper", label: "Active Developer" },
   { flag: UserFlags.VerifiedBot, emojiName: null, label: "Verified Bot" },
 ];
 

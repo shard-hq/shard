@@ -8,6 +8,8 @@ import {
   buildModerationEmbed,
   checkGuards,
   formatDuration,
+  MAX_TIMEOUT_MS,
+  parseDuration,
 } from "../../src/lib/moderation";
 
 const mockUser = (id: string, username = "user"): User =>
@@ -70,6 +72,37 @@ describe("formatDuration", () => {
     expect(formatDuration(24 * 60 * 60_000)).toBe("1d");
     expect(formatDuration(7 * 24 * 60 * 60_000)).toBe("7d");
     expect(formatDuration(28 * 24 * 60 * 60_000)).toBe("28d");
+  });
+});
+
+describe("parseDuration", () => {
+  test("accepts standard units", () => {
+    expect(parseDuration("30s")).toBe(30 * 1000);
+    expect(parseDuration("5m")).toBe(5 * 60 * 1000);
+    expect(parseDuration("2h")).toBe(2 * 60 * 60 * 1000);
+    expect(parseDuration("3d")).toBe(3 * 24 * 60 * 60 * 1000);
+    expect(parseDuration("1w")).toBe(7 * 24 * 60 * 60 * 1000);
+  });
+
+  test("trims whitespace and is case-insensitive", () => {
+    expect(parseDuration("  10m  ")).toBe(10 * 60 * 1000);
+    expect(parseDuration("10M")).toBe(10 * 60 * 1000);
+  });
+
+  test("rejects invalid formats", () => {
+    expect(parseDuration("")).toBeNull();
+    expect(parseDuration("5")).toBeNull();
+    expect(parseDuration("5 minutes")).toBeNull();
+    expect(parseDuration("5min")).toBeNull();
+    expect(parseDuration("abc")).toBeNull();
+    expect(parseDuration("-5m")).toBeNull();
+    expect(parseDuration("0m")).toBeNull();
+  });
+
+  test("caps at Discord's 28-day timeout limit", () => {
+    expect(parseDuration("28d")).toBe(MAX_TIMEOUT_MS);
+    expect(parseDuration("29d")).toBeNull();
+    expect(parseDuration("5w")).toBeNull();
   });
 });
 

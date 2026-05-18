@@ -4,14 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import {
-  buildModerationEmbed,
-  checkGuards,
-  formatAuditReason,
-  formatDuration,
-  notifyTarget,
-  recordCase,
-} from "../../lib/moderation";
+import { performTimeout } from "../../lib/mod-actions";
 import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
@@ -66,70 +59,26 @@ export default defineCommand({
       .fetch(target.id)
       .catch(() => null);
 
-    if (!member) {
-      await interaction.reply({
-        content: "That user is not in this server.",
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    const guardError = checkGuards(interaction, target, member, {
-      requireBotHierarchy: true,
-    });
-    if (guardError) {
-      await interaction.reply({
-        content: guardError,
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    try {
-      await member.timeout(
-        durationMs,
-        formatAuditReason(interaction.user, reason),
-      );
-    } catch (err) {
-      await interaction.reply({
-        content: "Failed to timeout this user (Discord refused the action).",
-        flags: MessageFlags.Ephemeral,
-      });
-      throw err;
-    }
-
-    // DM after the action: the user is still in the guild, so the DM is accurate
-    // (no false notification if Discord refused the timeout).
-    const dmDelivered = await notifyTarget(target, {
-      guild: interaction.guild,
-      type: "timeout",
-      reason,
-      durationMs,
-    });
-
-    const caseId = recordCase({
-      guildId: interaction.guildId,
-      userId: target.id,
-      moderatorId: interaction.user.id,
-      type: "timeout",
-      reason,
-      durationMs,
-    });
-
-    const embed = buildModerationEmbed({
-      type: "timeout",
+    const result = await performTimeout({
+      interaction,
       target,
-      moderator: interaction.user,
+      member,
       reason,
-      caseId,
-      dmNote: dmDelivered ? "" : " · DM not delivered",
-      titleExtra: ` (${formatDuration(durationMs)})`,
+      durationMs,
     });
+
+    if (!result.ok) {
+      await interaction.reply({
+        content: result.error,
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
 
     await interaction.reply({
-      embeds: [embed],
+      embeds: [result.embed],
       flags: MessageFlags.Ephemeral,
     });
-    await sendModLog(interaction.guild, embed);
+    await sendModLog(interaction.guild, result.embed);
   },
 });

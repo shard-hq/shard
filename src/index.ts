@@ -6,11 +6,13 @@ import { runMigrations } from "./db/migrate";
 import { loadButtons } from "./loaders/buttons";
 import { loadCommands } from "./loaders/commands";
 import { loadEvents } from "./loaders/events";
+import { loadModals } from "./loaders/modals";
 
 runMigrations();
 
 await loadCommands();
 await loadButtons();
+await loadModals();
 await loadEvents(client);
 
 const shutdown = async (signal: string): Promise<void> => {

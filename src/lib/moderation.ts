@@ -3,10 +3,17 @@ import {
   type ChatInputCommandInteraction,
   type Guild,
   type GuildMember,
+  type ModalSubmitInteraction,
   type User,
+  type UserContextMenuCommandInteraction,
 } from "discord.js";
 import { db } from "../db";
 import { cases, type CaseType } from "../db/schema";
+
+export type GuildModerationInteraction =
+  | ChatInputCommandInteraction<"cached">
+  | UserContextMenuCommandInteraction<"cached">
+  | ModalSubmitInteraction<"cached">;
 
 export interface CaseTypeMeta {
   emoji: string;
@@ -38,6 +45,39 @@ const DM_OPENING: Record<CaseType, (guildName: string) => string> = {
   untimeout: (g) => `Your timeout has been **removed** in **${g}**.`,
 };
 
+const SECOND_MS = 1_000;
+const MINUTE_MS = 60 * SECOND_MS;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+const WEEK_MS = 7 * DAY_MS;
+
+const UNIT_MS: Record<string, number> = {
+  s: SECOND_MS,
+  m: MINUTE_MS,
+  h: HOUR_MS,
+  d: DAY_MS,
+  w: WEEK_MS,
+};
+
+export const MAX_TIMEOUT_MS = 28 * DAY_MS;
+
+const DURATION_REGEX = /^(\d+)(s|m|h|d|w)$/i;
+
+export const parseDuration = (input: string): number | null => {
+  const match = DURATION_REGEX.exec(input.trim());
+  if (!match) return null;
+  const amountStr = match[1];
+  const unit = match[2];
+  if (!amountStr || !unit) return null;
+  const amount = Number.parseInt(amountStr, 10);
+  if (amount <= 0) return null;
+  const unitMs = UNIT_MS[unit.toLowerCase()];
+  if (!unitMs) return null;
+  const ms = amount * unitMs;
+  if (ms > MAX_TIMEOUT_MS) return null;
+  return ms;
+};
+
 export const formatDuration = (ms: number): string => {
   const s = Math.floor(ms / 1000);
   if (s < 60) return `${s}s`;
@@ -59,7 +99,7 @@ interface CheckGuardsOptions {
 }
 
 export const checkGuards = (
-  interaction: ChatInputCommandInteraction<"cached">,
+  interaction: GuildModerationInteraction,
   target: User,
   member: GuildMember | null,
   options: CheckGuardsOptions,
