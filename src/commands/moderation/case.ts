@@ -16,6 +16,7 @@ import { TYPE_META } from "../../lib/moderation";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const DELETE_COLOR = 0x99aab5;
+const EDIT_COLOR = 0xf1c40f;
 
 const handleDelete = async (
   interaction: ChatInputCommandInteraction<"cached">,
@@ -71,6 +72,69 @@ const handleDelete = async (
   await sendModLog(interaction.guild, embed);
 };
 
+const handleEdit = async (
+  interaction: ChatInputCommandInteraction<"cached">,
+): Promise<void> => {
+  const caseId = interaction.options.getInteger("id", true);
+  const newReason = interaction.options.getString("reason", true).trim();
+
+  if (newReason.length === 0) {
+    await interaction.reply({
+      content: "Reason cannot be empty.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  const existing = db
+    .select()
+    .from(cases)
+    .where(and(eq(cases.id, caseId), eq(cases.guildId, interaction.guildId)))
+    .get();
+
+  if (!existing) {
+    await interaction.reply({
+      content: `Case #${caseId} not found in this server.`,
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  const oldReason = existing.reason ?? "*No reason provided*";
+
+  db.update(cases)
+    .set({ reason: newReason })
+    .where(and(eq(cases.id, caseId), eq(cases.guildId, interaction.guildId)))
+    .run();
+
+  await interaction.reply({
+    content: `Case #${caseId} reason updated.`,
+    flags: MessageFlags.Ephemeral,
+  });
+
+  const meta = TYPE_META[existing.type];
+  const embed = new EmbedBuilder()
+    .setColor(EDIT_COLOR)
+    .setTitle(`✏️ Case #${caseId} edited`)
+    .setDescription(
+      [
+        `**Type:** ${meta.emoji} ${meta.label}`,
+        `**User:** <@${existing.userId}>`,
+      ].join("\n"),
+    )
+    .addFields(
+      { name: "Old reason", value: oldReason.slice(0, 1024) },
+      { name: "New reason", value: newReason.slice(0, 1024) },
+      {
+        name: "Edited by",
+        value: `<@${interaction.user.id}>`,
+        inline: true,
+      },
+    );
+
+  await sendModLog(interaction.guild, embed);
+};
+
 export default defineCommand({
   category: CommandCategory.Moderation,
   data: new SlashCommandBuilder()
@@ -89,11 +153,31 @@ export default defineCommand({
             .setMinValue(1)
             .setRequired(true),
         ),
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("edit")
+        .setDescription("Edit the reason of a moderation case.")
+        .addIntegerOption((opt) =>
+          opt
+            .setName("id")
+            .setDescription("The case number to edit.")
+            .setMinValue(1)
+            .setRequired(true),
+        )
+        .addStringOption((opt) =>
+          opt
+            .setName("reason")
+            .setDescription("The new reason for this case.")
+            .setMaxLength(512)
+            .setRequired(true),
+        ),
     ),
   async execute(interaction) {
     if (!interaction.inCachedGuild()) return;
 
     const sub = interaction.options.getSubcommand(true);
     if (sub === "delete") return handleDelete(interaction);
+    if (sub === "edit") return handleEdit(interaction);
   },
 });
