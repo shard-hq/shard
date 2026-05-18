@@ -2,7 +2,7 @@
 
 # Shard
 
-**The open-source, self-hostable alternative to MEE6, Dyno, Carl-bot, and ProBot — without paywalls, premium tiers, or feature gating.**
+**Building an open-source, self-hostable alternative to MEE6, Dyno, Carl-bot, and ProBot — no paywalls, no premium tiers, no feature gating.**
 
 [![Bun](https://img.shields.io/badge/Bun-1.3-fbf0df?logo=bun&logoColor=fff)](https://bun.sh)
 [![discord.js](https://img.shields.io/badge/discord.js-v14-5865f2?logo=discord&logoColor=fff)](https://discord.js.org)
@@ -13,6 +13,9 @@
 </div>
 
 Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](https://www.typescriptlang.org), and [discord.js v14](https://discord.js.org).
+
+> [!NOTE]
+> Shard is still in active development — every bit of feedback, every bug report, and every contribution genuinely moves the project forward. [Open a discussion](https://github.com/shard-hq/shard/discussions) or [file an issue](https://github.com/shard-hq/shard/issues) — we'd love to hear from you.
 
 ## Features
 
@@ -26,12 +29,49 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 
 A Discord application with a bot token — create one at the [Discord Developer Portal](https://discord.com/developers/applications).
 
-### Install
+### Docker
+
+The easiest way to run Shard is the pre-built image on GHCR: [`ghcr.io/shard-hq/shard:latest`](https://github.com/shard-hq/shard/pkgs/container/shard).
+
+#### One-shot — `docker run`
 
 ```bash
-git clone https://github.com/shard-hq/shard.git
-cd shard
-cp .env.example .env  # add your DISCORD_TOKEN
+docker run -d \
+  --name shard \
+  --restart unless-stopped \
+  -e DISCORD_TOKEN=your_token_here \
+  -v shard-data:/usr/src/app/data \
+  ghcr.io/shard-hq/shard:latest
+```
+
+#### Recommended for self-host — `docker compose`
+
+Create a `compose.yml`:
+
+```yaml
+services:
+  bot:
+    image: ghcr.io/shard-hq/shard:latest
+    container_name: shard
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - data:/usr/src/app/data
+
+volumes:
+  data:
+```
+
+And a `.env` next to it:
+
+```
+DISCORD_TOKEN=your_token_here
+```
+
+Then start the bot:
+
+```bash
 docker compose up -d
 ```
 
