@@ -24,6 +24,7 @@ export default defineConfig([
         "error",
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
+      "@typescript-eslint/no-deprecated": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-floating-promises": "error",
