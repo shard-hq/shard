@@ -5,6 +5,8 @@ on:
     workflows: ["CI"]
     types: [completed]
     branches: [main]
+  push:
+    tags: ['v*']
 
 permissions:
   contents: read
@@ -22,7 +24,8 @@ jobs:
   publish:
     name: Build and push image
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Run on tag push, or on a successful CI run on main.
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
@@ -32,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
@@ -53,8 +56,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=semver,pattern={{version}}
             type=raw,value=latest
-            type=raw,value=${{ github.event.workflow_run.head_sha }}
+            type=raw,value=${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Build and push
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
