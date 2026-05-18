@@ -27,3 +27,12 @@ export const cases = sqliteTable(
 
 export type Case = typeof cases.$inferSelect;
 export type NewCase = typeof cases.$inferInsert;
+
+export const guildSettings = sqliteTable("guild_settings", {
+  guildId: text("guild_id").primaryKey(),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export type GuildSettings = typeof guildSettings.$inferSelect;
+export type NewGuildSettings = typeof guildSettings.$inferInsert;

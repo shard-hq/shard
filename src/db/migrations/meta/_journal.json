@@ -15,6 +15,13 @@
       "when": 1779048390149,
       "tag": "0001_fixed_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1779134240908,
+      "tag": "0002_amusing_mariko_yashida",
+      "breakpoints": true
     }
   ]
 }
