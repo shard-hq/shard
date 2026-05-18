@@ -12,6 +12,7 @@ import {
   notifyTarget,
   recordCase,
 } from "../../lib/moderation";
+import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const MINUTE = 60_000;
@@ -118,6 +119,7 @@ export default defineCommand({
     const embed = buildModerationEmbed({
       type: "timeout",
       target,
+      moderator: interaction.user,
       reason,
       caseId,
       dmNote: dmDelivered ? "" : " · DM not delivered",
@@ -128,5 +130,6 @@ export default defineCommand({
       embeds: [embed],
       flags: MessageFlags.Ephemeral,
     });
+    await sendModLog(interaction.guild, embed);
   },
 });

@@ -1,0 +1,1 @@
+ALTER TABLE `guild_settings` ADD `mod_log_channel_id` text;

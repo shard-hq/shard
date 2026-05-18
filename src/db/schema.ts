@@ -30,6 +30,7 @@ export type NewCase = typeof cases.$inferInsert;
 
 export const guildSettings = sqliteTable("guild_settings", {
   guildId: text("guild_id").primaryKey(),
+  modLogChannelId: text("mod_log_channel_id"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 });

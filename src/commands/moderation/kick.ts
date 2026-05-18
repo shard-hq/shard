@@ -11,6 +11,7 @@ import {
   notifyTarget,
   recordCase,
 } from "../../lib/moderation";
+import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 export default defineCommand({
@@ -88,6 +89,7 @@ export default defineCommand({
     const embed = buildModerationEmbed({
       type: "kick",
       target,
+      moderator: interaction.user,
       reason,
       caseId,
       dmNote: dmDelivered ? "" : " · DM not delivered",
@@ -97,5 +99,6 @@ export default defineCommand({
       embeds: [embed],
       flags: MessageFlags.Ephemeral,
     });
+    await sendModLog(interaction.guild, embed);
   },
 });

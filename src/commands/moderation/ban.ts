@@ -11,6 +11,7 @@ import {
   notifyTarget,
   recordCase,
 } from "../../lib/moderation";
+import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const DELETE_CHOICES = [
@@ -108,6 +109,7 @@ export default defineCommand({
     const embed = buildModerationEmbed({
       type: "ban",
       target,
+      moderator: interaction.user,
       reason,
       caseId,
       dmNote,
@@ -117,5 +119,6 @@ export default defineCommand({
       embeds: [embed],
       flags: MessageFlags.Ephemeral,
     });
+    await sendModLog(interaction.guild, embed);
   },
 });

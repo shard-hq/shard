@@ -129,6 +129,7 @@ export const notifyTarget = async (
 export interface ModerationEmbedInput {
   type: CaseType;
   target: User;
+  moderator?: User;
   reason: string | null;
   caseId: number;
   dmNote?: string;
@@ -137,15 +138,23 @@ export interface ModerationEmbedInput {
 
 export const buildModerationEmbed = (input: ModerationEmbedInput): EmbedBuilder => {
   const meta = TYPE_META[input.type];
-  return new EmbedBuilder()
+  const embed = new EmbedBuilder()
     .setColor(meta.color)
     .setTitle(
       `${meta.emoji} ${meta.verb} ${input.target.username}${input.titleExtra ?? ""}`,
     )
     .setDescription(
       input.reason ? `**Reason:** ${input.reason}` : "*No reason provided.*",
-    )
-    .setFooter({ text: `Case #${input.caseId}${input.dmNote ?? ""}` });
+    );
+  if (input.moderator) {
+    embed.addFields({
+      name: "Moderator",
+      value: `<@${input.moderator.id}>`,
+      inline: true,
+    });
+  }
+  embed.setFooter({ text: `Case #${input.caseId}${input.dmNote ?? ""}` });
+  return embed;
 };
 
 export interface RecordCaseInput {

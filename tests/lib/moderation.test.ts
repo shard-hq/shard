@@ -130,6 +130,31 @@ describe("buildModerationEmbed", () => {
     }).toJSON();
     expect(json.title).toBe("🔊 Removed timeout from alice");
   });
+
+  test("adds a moderator field when provided", () => {
+    const moderator = mockUser("999", "bob");
+    const json = buildModerationEmbed({
+      type: "warn",
+      target,
+      moderator,
+      reason: null,
+      caseId: 5,
+    }).toJSON();
+    const field = json.fields?.[0];
+    expect(field?.name).toBe("Moderator");
+    expect(field?.value).toBe("<@999>");
+    expect(field?.inline).toBe(true);
+  });
+
+  test("omits the moderator field when not provided", () => {
+    const json = buildModerationEmbed({
+      type: "warn",
+      target,
+      reason: null,
+      caseId: 5,
+    }).toJSON();
+    expect(json.fields ?? []).toHaveLength(0);
+  });
 });
 
 describe("checkGuards", () => {

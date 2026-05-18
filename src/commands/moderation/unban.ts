@@ -5,6 +5,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { logger } from "../../lib/logger";
+import { sendModLog } from "../../lib/mod-log";
 import {
   buildModerationEmbed,
   formatAuditReason,
@@ -65,6 +66,7 @@ export default defineCommand({
     const embed = buildModerationEmbed({
       type: "unban",
       target,
+      moderator: interaction.user,
       reason,
       caseId,
     });
@@ -73,5 +75,6 @@ export default defineCommand({
       embeds: [embed],
       flags: MessageFlags.Ephemeral,
     });
+    await sendModLog(interaction.guild, embed);
   },
 });
