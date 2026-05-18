@@ -19,22 +19,10 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 
 ## Features
 
-### Moderation
-- `/ban`, `/kick`, `/warn`, `/timeout` — with optional DM, audit log, and case tracking
-- `/unban`, `/untimeout` — reverse actions
-- `/purge` — bulk delete recent messages (optional user filter)
-
-### Right-click context menu
-Right-click any user → **Apps** → Warn, Kick, Ban, Timeout, View Cases.
-
-### Cases & mod log
-- `/cases` — case history per user
-- `/case view`, `edit`, `delete` — manage individual cases
-- `/config modlog set` — pick a channel for moderation logs
-
-### Utility
-- `/userinfo`, `/serverinfo`, `/avatar`
-- `/help`, `/ping`
+- **Moderation commands and logs** — actions with optional DM-to-user, audit log entries, and a configurable mod log channel
+- **Case history** — every action tracked, viewable, editable, and deletable
+- **Right-click context menus** — quick moderation actions from any user profile
+- **Utility commands** — user, server, and avatar info
 
 ## Quick start
 
@@ -92,7 +80,12 @@ Update later with `docker compose pull && docker compose up -d`.
 
 ### Invite
 
-Generate an OAuth2 install link in the Developer Portal with scopes `bot` and `applications.commands`, plus the permissions matching the features you enable.
+In the [Developer Portal](https://discord.com/developers/applications) → **OAuth2 → URL Generator**:
+
+- **Scopes:** `bot`, `applications.commands`
+- **Bot permissions:** View Channels, Send Messages, Embed Links, Read Message History, Ban Members, Kick Members, Moderate Members, Manage Messages
+
+Use the generated URL to invite the bot.
 
 ## Run without Docker
 
