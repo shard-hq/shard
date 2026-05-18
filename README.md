@@ -19,9 +19,22 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 
 ## Features
 
-- **Self-hostable** — run it on your own infrastructure, own your data.
-- **Modern stack** — Bun, TypeScript strict, discord.js v14, ESLint type-checked.
-- **Auto-deployed commands** — slash commands register globally on every startup.
+### Moderation
+- `/ban`, `/kick`, `/warn`, `/timeout` — with optional DM, audit log, and case tracking
+- `/unban`, `/untimeout` — reverse actions
+- `/purge` — bulk delete recent messages (optional user filter)
+
+### Right-click context menu
+Right-click any user → **Apps** → Warn, Kick, Ban, Timeout, View Cases.
+
+### Cases & mod log
+- `/cases` — case history per user
+- `/case view`, `edit`, `delete` — manage individual cases
+- `/config modlog set` — pick a channel for moderation logs
+
+### Utility
+- `/userinfo`, `/serverinfo`, `/avatar`
+- `/help`, `/ping`
 
 ## Quick start
 
