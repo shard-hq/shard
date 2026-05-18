@@ -1,5 +1,4 @@
 import pino from "pino";
-import pretty from "pino-pretty";
 
 export const LOG_LEVELS = [
   "fatal",
@@ -21,7 +20,7 @@ const level: LogLevel = isLogLevel(rawLevel) ? rawLevel : "info";
 const isDev = Bun.env.NODE_ENV !== "production";
 
 const stream = isDev
-  ? pretty({
+  ? (await import("pino-pretty")).default({
       colorize: true,
       translateTime: "HH:MM:ss.l",
       ignore: "pid,hostname",
