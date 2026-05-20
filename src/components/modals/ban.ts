@@ -22,22 +22,6 @@ export default defineModal({
     const targetId = interaction.customId.split(":")[1];
     if (!targetId) return;
 
-    const target = await interaction.client.users
-      .fetch(targetId)
-      .catch(() => null);
-    if (!target) {
-      await interaction.reply({
-        content: "Target user not found.",
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    const reasonInput = interaction.fields
-      .getTextInputValue("reason")
-      .trim();
-    const reason = reasonInput || null;
-
     const deleteDaysInput = interaction.fields.getTextInputValue("delete_days");
     const deleteDays = parseDeleteDays(deleteDaysInput);
     if (deleteDays === null) {
@@ -48,11 +32,24 @@ export default defineModal({
       return;
     }
 
+    const reasonInput = interaction.fields
+      .getTextInputValue("reason")
+      .trim();
+    const reason = reasonInput || null;
+
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+    const target = await interaction.client.users
+      .fetch(targetId)
+      .catch(() => null);
+    if (!target) {
+      await interaction.editReply({ content: "Target user not found." });
+      return;
+    }
+
     const member = await interaction.guild.members
       .fetch(targetId)
       .catch(() => null);
-
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const result = await performBan({
       interaction,

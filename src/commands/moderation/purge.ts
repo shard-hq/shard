@@ -37,23 +37,27 @@ export default defineCommand({
   async execute(interaction) {
     if (!interaction.inCachedGuild()) return;
 
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     const channel = interaction.channel;
-    if (!channel) return;
+    if (!channel) {
+      await interaction.editReply({
+        content: "This command can't run in this channel.",
+      });
+      return;
+    }
 
     const me = interaction.guild.members.me;
     const botPerms = me ? channel.permissionsFor(me) : null;
     if (!botPerms?.has(PermissionFlagsBits.ManageMessages)) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "I need **Manage Messages** in this channel.",
-        flags: MessageFlags.Ephemeral,
       });
       return;
     }
 
     const count = interaction.options.getInteger("count", true);
     const user = interaction.options.getUser("user");
-
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const fetched = await channel.messages.fetch({ limit: FETCH_BATCH });
     const candidates = user

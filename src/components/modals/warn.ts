@@ -11,14 +11,13 @@ export default defineModal({
     const targetId = interaction.customId.split(":")[1];
     if (!targetId) return;
 
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     const target = await interaction.client.users
       .fetch(targetId)
       .catch(() => null);
     if (!target) {
-      await interaction.reply({
-        content: "Target user not found.",
-        flags: MessageFlags.Ephemeral,
-      });
+      await interaction.editReply({ content: "Target user not found." });
       return;
     }
 
@@ -29,8 +28,6 @@ export default defineModal({
     const member = await interaction.guild.members
       .fetch(targetId)
       .catch(() => null);
-
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const result = await performWarn({ interaction, target, member, reason });
 

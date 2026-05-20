@@ -46,6 +46,8 @@ export default defineCommand({
   async execute(interaction) {
     if (!interaction.inCachedGuild()) return;
 
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     const target = interaction.options.getUser("user", true);
     const reason = interaction.options.getString("reason");
     const deleteMessageSeconds =
@@ -63,17 +65,11 @@ export default defineCommand({
     });
 
     if (!result.ok) {
-      await interaction.reply({
-        content: result.error,
-        flags: MessageFlags.Ephemeral,
-      });
+      await interaction.editReply({ content: result.error });
       return;
     }
 
-    await interaction.reply({
-      embeds: [result.embed],
-      flags: MessageFlags.Ephemeral,
-    });
+    await interaction.editReply({ embeds: [result.embed] });
     await sendModLog(interaction.guild, result.embed);
   },
 });
