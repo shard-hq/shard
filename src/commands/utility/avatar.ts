@@ -8,15 +8,15 @@ import {
   SlashCommandBuilder,
   type User,
 } from "discord.js";
+import { BRAND_BLURPLE } from "../../lib/constants";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const AVATAR_SIZE = 1024;
-const DEFAULT_ACCENT = 0x5865f2;
 
 const resolveAccent = (member: GuildMember | null, user: User): number => {
   if (member && member.displayColor !== 0) return member.displayColor;
   if (typeof user.accentColor === "number") return user.accentColor;
-  return DEFAULT_ACCENT;
+  return BRAND_BLURPLE;
 };
 
 export default defineCommand({

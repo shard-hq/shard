@@ -12,13 +12,13 @@ import {
   time,
   type User,
 } from "discord.js";
-import { CommandCategory, defineCommand } from "../../types/command";
 import { badgeEmoji } from "../../lib/badge-emojis";
+import { BRAND_BLURPLE } from "../../lib/constants";
+import { CommandCategory, defineCommand } from "../../types/command";
 
 const MAX_ROLES_DISPLAYED = 25;
 const AVATAR_SIZE = 256;
 const BANNER_SIZE = 1024;
-const DEFAULT_ACCENT = 0x5865f2;
 
 interface BadgeDef {
   flag: UserFlags;
@@ -63,7 +63,7 @@ const formatBadges = (user: User): string => {
 const resolveAccent = (member: GuildMember | null, user: User): number => {
   if (member && member.displayColor !== 0) return member.displayColor;
   if (typeof user.accentColor === "number") return user.accentColor;
-  return DEFAULT_ACCENT;
+  return BRAND_BLURPLE;
 };
 
 const formatMemberStatus = (member: GuildMember): string => {

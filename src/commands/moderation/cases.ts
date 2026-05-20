@@ -13,11 +13,11 @@ import {
 import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db";
 import { cases, type Case, type CaseType } from "../../db/schema";
+import { BRAND_BLURPLE } from "../../lib/constants";
 import { formatDuration, TYPE_META } from "../../lib/moderation";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const PAGE_SIZE = 5;
-const DEFAULT_COLOR = 0x5865f2;
 export const CASES_BUTTON_PREFIX = "cases";
 
 const SEVERITY_ORDER: readonly CaseType[] = [
@@ -44,7 +44,7 @@ const dominantColor = (types: Set<CaseType>): number => {
   for (const t of SEVERITY_ORDER) {
     if (types.has(t)) return TYPE_META[t].color;
   }
-  return DEFAULT_COLOR;
+  return BRAND_BLURPLE;
 };
 
 const formatCaseField = (row: Case): { name: string; value: string } => {
@@ -77,7 +77,7 @@ export const buildCasesPage = (
 
   if (total === 0) {
     embed
-      .setColor(DEFAULT_COLOR)
+      .setColor(BRAND_BLURPLE)
       .setDescription("No cases on record.")
       .setFooter({ text: `ID · ${target.id}` });
     return { embeds: [embed], components: [] };

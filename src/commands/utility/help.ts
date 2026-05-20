@@ -4,14 +4,13 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { commandRegistry } from "../../lib/command-registry";
+import { BRAND_BLURPLE } from "../../lib/constants";
 import {
   CATEGORY_LABEL,
   CommandCategory,
   defineCommand,
   type Command,
 } from "../../types/command";
-
-const ACCENT = 0x5865f2;
 
 export default defineCommand({
   category: CommandCategory.Utility,
@@ -27,7 +26,7 @@ export default defineCommand({
     }
 
     const embed = new EmbedBuilder()
-      .setColor(ACCENT)
+      .setColor(BRAND_BLURPLE)
       .setTitle("Commands")
       .setDescription(`${commandRegistry.size} commands available`);
 

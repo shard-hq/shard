@@ -7,13 +7,12 @@ import {
   SlashCommandBuilder,
   type ChatInputCommandInteraction,
 } from "discord.js";
+import { BRAND_BLURPLE } from "../../lib/constants";
 import {
   getGuildSettings,
   updateGuildSettings,
 } from "../../lib/guild-settings";
 import { CommandCategory, defineCommand } from "../../types/command";
-
-const ACCENT = 0x5865f2;
 
 const handleModlogSet = async (
   interaction: ChatInputCommandInteraction<"cached">,
@@ -54,7 +53,7 @@ const handleModlogStatus = async (
   const settings = getGuildSettings(interaction.guildId);
   const channelId = settings?.modLogChannelId;
   const embed = new EmbedBuilder()
-    .setColor(ACCENT)
+    .setColor(BRAND_BLURPLE)
     .setTitle("Server configuration")
     .addFields({
       name: "Mod log",
