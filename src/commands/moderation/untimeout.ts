@@ -4,13 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import {
-  buildModerationEmbed,
-  checkGuards,
-  formatAuditReason,
-  notifyTarget,
-  recordCase,
-} from "../../lib/moderation";
+import { performUntimeout } from "../../lib/mod-actions";
 import { sendModLog } from "../../lib/mod-log";
 import { CommandCategory, defineCommand } from "../../types/command";
 
@@ -36,78 +30,27 @@ export default defineCommand({
   async execute(interaction) {
     if (!interaction.inCachedGuild()) return;
 
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     const target = interaction.options.getUser("user", true);
     const reason = interaction.options.getString("reason");
     const member = await interaction.guild.members
       .fetch(target.id)
       .catch(() => null);
 
-    if (!member) {
-      await interaction.reply({
-        content: "That user is not in this server.",
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    const until = member.communicationDisabledUntilTimestamp;
-    if (!until || until <= Date.now()) {
-      await interaction.reply({
-        content: "That user is not currently timed out.",
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    const guardError = checkGuards(interaction, target, member, {
-      requireBotHierarchy: true,
-    });
-    if (guardError) {
-      await interaction.reply({
-        content: guardError,
-        flags: MessageFlags.Ephemeral,
-      });
-      return;
-    }
-
-    try {
-      await member.timeout(null, formatAuditReason(interaction.user, reason));
-    } catch (err) {
-      await interaction.reply({
-        content: "Failed to remove timeout (Discord refused the action).",
-        flags: MessageFlags.Ephemeral,
-      });
-      throw err;
-    }
-
-    // DM after the action: the user is still in the guild, so the DM is accurate.
-    const dmDelivered = await notifyTarget(target, {
-      guild: interaction.guild,
-      type: "untimeout",
-      reason,
-    });
-
-    const caseId = recordCase({
-      guildId: interaction.guildId,
-      userId: target.id,
-      moderatorId: interaction.user.id,
-      type: "untimeout",
-      reason,
-    });
-
-    const embed = buildModerationEmbed({
-      type: "untimeout",
+    const result = await performUntimeout({
+      interaction,
       target,
-      moderator: interaction.user,
+      member,
       reason,
-      caseId,
-      dmNote: dmDelivered ? "" : " · DM not delivered",
     });
 
-    await interaction.reply({
-      embeds: [embed],
-      flags: MessageFlags.Ephemeral,
-    });
-    await sendModLog(interaction.guild, embed);
+    if (!result.ok) {
+      await interaction.editReply({ content: result.error });
+      return;
+    }
+
+    await interaction.editReply({ embeds: [result.embed] });
+    await sendModLog(interaction.guild, result.embed);
   },
 });

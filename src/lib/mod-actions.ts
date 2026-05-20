@@ -3,6 +3,7 @@ import {
   type GuildMember,
   type User,
 } from "discord.js";
+import { logger } from "./logger";
 import {
   buildModerationEmbed,
   checkGuards,
@@ -249,5 +250,99 @@ export const performTimeout = async (
     memberInServer: true,
     titleExtra: ` (${formatDuration(durationMs)})`,
   });
+};
+
+export const performUntimeout = async (
+  input: PerformInput,
+): Promise<PerformResult> => {
+  const { interaction, target, member, reason } = input;
+  if (!member) {
+    return { ok: false, error: "That user is not in this server." };
+  }
+
+  const until = member.communicationDisabledUntilTimestamp;
+  if (!until || until <= Date.now()) {
+    return { ok: false, error: "That user is not currently timed out." };
+  }
+
+  const guardError = checkGuards(interaction, target, member, {
+    requireBotHierarchy: true,
+  });
+  if (guardError) return { ok: false, error: guardError };
+
+  try {
+    await member.timeout(null, formatAuditReason(interaction.user, reason));
+  } catch {
+    return {
+      ok: false,
+      error: "Failed to remove timeout (Discord refused the action).",
+    };
+  }
+
+  const dmDelivered = await notifyTarget(target, {
+    guild: interaction.guild,
+    type: "untimeout",
+    reason,
+  });
+
+  const caseId = recordCase({
+    guildId: interaction.guildId,
+    userId: target.id,
+    moderatorId: interaction.user.id,
+    type: "untimeout",
+    reason,
+  });
+
+  return buildSuccess({
+    type: "untimeout",
+    target,
+    moderator: interaction.user,
+    reason,
+    caseId,
+    dmDelivered,
+    memberInServer: true,
+  });
+};
+
+export type PerformUnbanInput = Omit<PerformInput, "member">;
+
+export const performUnban = async (
+  input: PerformUnbanInput,
+): Promise<PerformResult> => {
+  const { interaction, target, reason } = input;
+
+  try {
+    await interaction.guild.bans.remove(
+      target.id,
+      formatAuditReason(interaction.user, reason),
+    );
+  } catch (err) {
+    logger.warn(
+      { err, target: target.id, guild: interaction.guildId },
+      "unban refused by Discord",
+    );
+    return {
+      ok: false,
+      error: "That user is not banned, or I can't unban them.",
+    };
+  }
+
+  const caseId = recordCase({
+    guildId: interaction.guildId,
+    userId: target.id,
+    moderatorId: interaction.user.id,
+    type: "unban",
+    reason,
+  });
+
+  const embed = buildModerationEmbed({
+    type: "unban",
+    target,
+    moderator: interaction.user,
+    reason,
+    caseId,
+  });
+
+  return { ok: true, caseId, embed };
 };
 

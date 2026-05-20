@@ -4,13 +4,8 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import { logger } from "../../lib/logger";
+import { performUnban } from "../../lib/mod-actions";
 import { sendModLog } from "../../lib/mod-log";
-import {
-  buildModerationEmbed,
-  formatAuditReason,
-  recordCase,
-} from "../../lib/moderation";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 export default defineCommand({
@@ -35,46 +30,19 @@ export default defineCommand({
   async execute(interaction) {
     if (!interaction.inCachedGuild()) return;
 
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     const target = interaction.options.getUser("user", true);
     const reason = interaction.options.getString("reason");
 
-    try {
-      await interaction.guild.bans.remove(
-        target.id,
-        formatAuditReason(interaction.user, reason),
-      );
-    } catch (err) {
-      logger.warn(
-        { err, target: target.id, guild: interaction.guildId },
-        "unban refused by Discord",
-      );
-      await interaction.reply({
-        content: "That user is not banned, or I can't unban them.",
-        flags: MessageFlags.Ephemeral,
-      });
+    const result = await performUnban({ interaction, target, reason });
+
+    if (!result.ok) {
+      await interaction.editReply({ content: result.error });
       return;
     }
 
-    const caseId = recordCase({
-      guildId: interaction.guildId,
-      userId: target.id,
-      moderatorId: interaction.user.id,
-      type: "unban",
-      reason,
-    });
-
-    const embed = buildModerationEmbed({
-      type: "unban",
-      target,
-      moderator: interaction.user,
-      reason,
-      caseId,
-    });
-
-    await interaction.reply({
-      embeds: [embed],
-      flags: MessageFlags.Ephemeral,
-    });
-    await sendModLog(interaction.guild, embed);
+    await interaction.editReply({ embeds: [result.embed] });
+    await sendModLog(interaction.guild, result.embed);
   },
 });
