@@ -86,7 +86,7 @@ Preferred type guards: `isChatInputCommand()`, `isButton()`, `isStringSelectMenu
 ### Builders — never raw objects
 
 - `EmbedBuilder`, `ActionRowBuilder`, `ButtonBuilder`, `StringSelectMenuBuilder`, `ModalBuilder`, `TextInputBuilder`.
-- For modern rich messages: **Components V2** (`ContainerBuilder`, `SectionBuilder`, `TextDisplayBuilder`, `MediaGalleryBuilder`, `SeparatorBuilder`) — send with `flags: MessageFlags.IsComponentsV2`. Prefer Components V2 over embeds for new displays.
+- For modern rich messages: **Components V2** (`ContainerBuilder`, `SectionBuilder`, `TextDisplayBuilder`, `MediaGalleryBuilder`, `SeparatorBuilder`) — send with `flags: MessageFlags.IsComponentsV2`. Use embeds for info-dense displays (clean column grid via inline fields, minimal emoji); reserve Components V2 for mixed-component messages (welcome DMs, hero layouts).
 
 ### Component routing (buttons, modals, selects)
 
