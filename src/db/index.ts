@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import path from "node:path";
-import { Database } from "bun:sqlite";
+import { constants, Database } from "bun:sqlite";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { logger } from "../lib/logger";
 
@@ -20,4 +20,8 @@ logger.info({ path: DB_PATH }, "database connected");
 
 export const db = drizzle({ client: sqlite });
 
-export const closeDb = (): void => sqlite.close(false);
+export const closeDb = (): void => {
+  sqlite.fileControl(constants.SQLITE_FCNTL_PERSIST_WAL, 0);
+  sqlite.run("PRAGMA wal_checkpoint(TRUNCATE)");
+  sqlite.close(false);
+};
