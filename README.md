@@ -22,6 +22,7 @@ Shard is a modern Discord bot built with [Bun](https://bun.sh), [TypeScript](htt
 - **Moderation commands and logs** — actions with optional DM-to-user, audit log entries, and a configurable mod log channel
 - **Case history** — every action tracked, viewable, editable, and deletable
 - **Right-click context menus** — quick moderation actions from any user profile
+- **Autoroles** — assign roles automatically to new members on join
 - **Utility commands** — user, server, and avatar info
 
 ## Quick start
@@ -78,12 +79,22 @@ docker compose up -d
 
 Update later with `docker compose pull && docker compose up -d`.
 
+### Privileged intents
+
+In the [Developer Portal](https://discord.com/developers/applications) → your application → **Bot**, enable all three **Privileged Gateway Intents**:
+
+- **Server Members Intent** — required (autoroles, member events)
+- **Message Content Intent** — recommended (future features)
+- **Presence Intent** — recommended (future features)
+
+Enabling them upfront means you won't have to come back here whenever Shard ships a new feature.
+
 ### Invite
 
 In the [Developer Portal](https://discord.com/developers/applications) → **OAuth2 → URL Generator**:
 
 - **Scopes:** `bot`, `applications.commands`
-- **Bot permissions:** View Channels, Send Messages, Embed Links, Read Message History, Ban Members, Kick Members, Moderate Members, Manage Messages
+- **Bot permissions:** View Channels, Send Messages, Embed Links, Read Message History, Ban Members, Kick Members, Moderate Members, Manage Messages, Manage Roles
 
 Use the generated URL to invite the bot.
 

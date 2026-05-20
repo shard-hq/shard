@@ -1,4 +1,10 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
 
 export const CASE_TYPES = [
   "warn",
@@ -37,3 +43,16 @@ export const guildSettings = sqliteTable("guild_settings", {
 
 export type GuildSettings = typeof guildSettings.$inferSelect;
 export type NewGuildSettings = typeof guildSettings.$inferInsert;
+
+export const guildAutoroles = sqliteTable(
+  "guild_autoroles",
+  {
+    guildId: text("guild_id").notNull(),
+    roleId: text("role_id").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.guildId, t.roleId] })],
+);
+
+export type GuildAutorole = typeof guildAutoroles.$inferSelect;
+export type NewGuildAutorole = typeof guildAutoroles.$inferInsert;
