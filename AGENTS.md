@@ -13,10 +13,10 @@ Discord bot written in **TypeScript** on **Bun**, built on **discord.js v14**.
 - Build: `bun build` if needed.
 - **No `dotenv`**: Bun loads `.env` automatically. Access via `Bun.env.X` or `process.env.X`.
 - Prefer native Bun APIs when they exist:
-  - `Bun.file` over `node:fs.readFile/writeFile`
+  - `Bun.file` over `node:fs.readFile/writeFile` — for individual file read/write. `mkdir`, `readdir`, recursive traversal, etc. still need `node:fs`.
   - `bun:sqlite` over `better-sqlite3`
-  - `Bun.sql` (Postgres), `Bun.redis` (Redis)
-  - `Bun.$\`cmd\`` over `execa` / `child_process`
+  - `Bun.sql` (Postgres, MySQL, SQLite — single client), `Bun.redis` (Redis)
+  - `Bun.$\`cmd\`` over `execa` / `child_process` for internal scripts and one-off commands
 
 ---
 
@@ -32,7 +32,7 @@ Discord bot written in **TypeScript** on **Bun**, built on **discord.js v14**.
   - public types (props, payloads, API responses)
 - **`interface`** for object shapes and public contracts. **`type`** for unions, intersections, mapped types, utilities.
 - **`readonly`** as soon as a value isn't reassigned; `as const` for literals.
-- **Type-only imports**: `import type { ... }` when importing only types (`verbatimModuleSyntax` is enabled — it's required).
+- **Type-only imports**: use `import type { ... }` when the import is used *only* as a type (`verbatimModuleSyntax` is enabled — type-only imports must be marked so they're elided at runtime). An import used for both a value and a type stays a regular `import`.
 - **No `enum`** — use `as const` objects + `type X = typeof X[keyof typeof X]`. Exception: enums shipped by discord.js (`GatewayIntentBits`, `Events`, etc.) are used as-is.
 - **Typed errors**: `catch (err: unknown)` then narrow. Never re-throw a string.
 
@@ -83,9 +83,9 @@ Use `flags: MessageFlags.Ephemeral`, **not** the deprecated `ephemeral: true`.
 
 Preferred type guards: `isChatInputCommand()`, `isButton()`, `isStringSelectMenu()`, `isModalSubmit()`, `isAutocomplete()`, `isContextMenuCommand()`.
 
-### Builders — never raw objects
+### Builders — prefer builders for top-level constructs
 
-- `EmbedBuilder`, `ActionRowBuilder`, `ButtonBuilder`, `StringSelectMenuBuilder`, `ModalBuilder`, `TextInputBuilder`.
+- Use builders to assemble messages, embeds, components, and modals: `EmbedBuilder`, `ActionRowBuilder`, `ButtonBuilder`, `StringSelectMenuBuilder`, `ModalBuilder`, `LabelBuilder` (wraps an input inside a modal), `TextInputBuilder`. Setter shortcuts that accept option objects (`addFields([{ name, value, inline }])`, `setAuthor({ name, iconURL })`, etc.) are fine — that's the supported API. The rule is "no hand-rolled `{ embeds: [{ title }] }` at the call site", not "ban every object literal".
 - For modern rich messages: **Components V2** (`ContainerBuilder`, `SectionBuilder`, `TextDisplayBuilder`, `MediaGalleryBuilder`, `SeparatorBuilder`) — send with `flags: MessageFlags.IsComponentsV2`. Use embeds for info-dense displays (clean column grid via inline fields, minimal emoji); reserve Components V2 for mixed-component messages (welcome DMs, hero layouts).
 
 ### Component routing (buttons, modals, selects)
