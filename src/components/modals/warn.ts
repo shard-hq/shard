@@ -1,6 +1,12 @@
 import { MessageFlags } from "discord.js";
-import { performWarn } from "../../lib/mod-actions";
-import { sendModLog } from "../../lib/mod-log";
+import {
+  performWarn,
+  respondModerationResult,
+} from "../../lib/mod-actions";
+import {
+  extractReason,
+  fetchTargetAndMember,
+} from "../../lib/mod-modals";
 import { defineModal } from "../../types/modal";
 
 export default defineModal({
@@ -13,30 +19,18 @@ export default defineModal({
 
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const target = await interaction.client.users
-      .fetch(targetId)
-      .catch(() => null);
-    if (!target) {
+    const resolved = await fetchTargetAndMember(interaction, targetId);
+    if (!resolved) {
       await interaction.editReply({ content: "Target user not found." });
       return;
     }
 
-    const reasonInput = interaction.fields
-      .getTextInputValue("reason")
-      .trim();
-    const reason = reasonInput || null;
-    const member = await interaction.guild.members
-      .fetch(targetId)
-      .catch(() => null);
-
-    const result = await performWarn({ interaction, target, member, reason });
-
-    if (!result.ok) {
-      await interaction.editReply({ content: result.error });
-      return;
-    }
-
-    await interaction.editReply({ embeds: [result.embed] });
-    await sendModLog(interaction.guild, result.embed);
+    const result = await performWarn({
+      interaction,
+      target: resolved.target,
+      member: resolved.member,
+      reason: extractReason(interaction),
+    });
+    await respondModerationResult(interaction, result);
   },
 });

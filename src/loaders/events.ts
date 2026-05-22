@@ -28,7 +28,7 @@ export const loadEvents = async (client: Client): Promise<void> => {
   let count = 0;
 
   for await (const file of glob.scan(EVENTS_DIR)) {
-    if (file.endsWith(".test.ts")) continue;
+    if (file.endsWith(".test.ts") || file.endsWith(".d.ts")) continue;
 
     const absPath = path.join(EVENTS_DIR, file);
     try {

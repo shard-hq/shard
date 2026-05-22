@@ -1,6 +1,12 @@
 import { MessageFlags } from "discord.js";
-import { performTimeout } from "../../lib/mod-actions";
-import { sendModLog } from "../../lib/mod-log";
+import {
+  performTimeout,
+  respondModerationResult,
+} from "../../lib/mod-actions";
+import {
+  extractReason,
+  fetchTargetAndMember,
+} from "../../lib/mod-modals";
 import { parseDuration } from "../../lib/moderation";
 import { defineModal } from "../../types/modal";
 
@@ -12,8 +18,9 @@ export default defineModal({
     const targetId = interaction.customId.split(":")[1];
     if (!targetId) return;
 
-    const durationInput = interaction.fields.getTextInputValue("duration");
-    const durationMs = parseDuration(durationInput);
+    const durationMs = parseDuration(
+      interaction.fields.getTextInputValue("duration"),
+    );
     if (durationMs === null) {
       await interaction.reply({
         content:
@@ -23,39 +30,21 @@ export default defineModal({
       return;
     }
 
-    const reasonInput = interaction.fields
-      .getTextInputValue("reason")
-      .trim();
-    const reason = reasonInput || null;
-
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const target = await interaction.client.users
-      .fetch(targetId)
-      .catch(() => null);
-    if (!target) {
+    const resolved = await fetchTargetAndMember(interaction, targetId);
+    if (!resolved) {
       await interaction.editReply({ content: "Target user not found." });
       return;
     }
 
-    const member = await interaction.guild.members
-      .fetch(targetId)
-      .catch(() => null);
-
     const result = await performTimeout({
       interaction,
-      target,
-      member,
-      reason,
+      target: resolved.target,
+      member: resolved.member,
+      reason: extractReason(interaction),
       durationMs,
     });
-
-    if (!result.ok) {
-      await interaction.editReply({ content: result.error });
-      return;
-    }
-
-    await interaction.editReply({ embeds: [result.embed] });
-    await sendModLog(interaction.guild, result.embed);
+    await respondModerationResult(interaction, result);
   },
 });

@@ -13,11 +13,10 @@ const isModalHandler = (value: unknown): value is ModalHandler => {
 };
 
 export const loadModals = async (): Promise<void> => {
-  modalRegistry.clear();
   const glob = new Glob("**/*.ts");
 
   for await (const file of glob.scan(MODALS_DIR)) {
-    if (file.endsWith(".test.ts")) continue;
+    if (file.endsWith(".test.ts") || file.endsWith(".d.ts")) continue;
 
     const absPath = path.join(MODALS_DIR, file);
     try {

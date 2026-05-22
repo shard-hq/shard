@@ -4,8 +4,10 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import { performTimeout } from "../../lib/mod-actions";
-import { sendModLog } from "../../lib/mod-log";
+import {
+  performTimeout,
+  respondModerationResult,
+} from "../../lib/mod-actions";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const MINUTE = 60_000;
@@ -69,13 +71,6 @@ export default defineCommand({
       reason,
       durationMs,
     });
-
-    if (!result.ok) {
-      await interaction.editReply({ content: result.error });
-      return;
-    }
-
-    await interaction.editReply({ embeds: [result.embed] });
-    await sendModLog(interaction.guild, result.embed);
+    await respondModerationResult(interaction, result);
   },
 });

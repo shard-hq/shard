@@ -4,6 +4,7 @@ import {
   type User,
 } from "discord.js";
 import { logger } from "./logger";
+import { sendModLog } from "./mod-log";
 import {
   buildModerationEmbed,
   checkGuards,
@@ -33,6 +34,18 @@ export interface PerformErr {
 }
 
 export type PerformResult = PerformOk | PerformErr;
+
+export const respondModerationResult = async (
+  interaction: GuildModerationInteraction,
+  result: PerformResult,
+): Promise<void> => {
+  if (!result.ok) {
+    await interaction.editReply({ content: result.error });
+    return;
+  }
+  await interaction.editReply({ embeds: [result.embed] });
+  await sendModLog(interaction.guild, result.embed);
+};
 
 interface BuildSuccessInput {
   type: "warn" | "kick" | "ban" | "timeout" | "untimeout" | "unban";

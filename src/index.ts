@@ -10,10 +10,12 @@ import { loadModals } from "./loaders/modals";
 
 runMigrations();
 
-await loadCommands();
-await loadButtons();
-await loadModals();
-await loadEvents(client);
+await Promise.all([
+  loadCommands(),
+  loadButtons(),
+  loadModals(),
+  loadEvents(client),
+]);
 
 const shutdown = async (signal: string): Promise<void> => {
   logger.info({ signal }, "shutting down");

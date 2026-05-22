@@ -37,12 +37,10 @@ const isCommand = (value: unknown): value is Command => {
 };
 
 export const loadCommands = async (): Promise<void> => {
-  commandRegistry.clear();
-  userCommandRegistry.clear();
   const glob = new Glob("**/*.ts");
 
   for await (const file of glob.scan(COMMANDS_DIR)) {
-    if (file.endsWith(".test.ts")) continue;
+    if (file.endsWith(".test.ts") || file.endsWith(".d.ts")) continue;
 
     const absPath = path.join(COMMANDS_DIR, file);
     try {

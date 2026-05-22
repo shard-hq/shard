@@ -13,11 +13,10 @@ const isButtonHandler = (value: unknown): value is ButtonHandler => {
 };
 
 export const loadButtons = async (): Promise<void> => {
-  buttonRegistry.clear();
   const glob = new Glob("**/*.ts");
 
   for await (const file of glob.scan(BUTTONS_DIR)) {
-    if (file.endsWith(".test.ts")) continue;
+    if (file.endsWith(".test.ts") || file.endsWith(".d.ts")) continue;
 
     const absPath = path.join(BUTTONS_DIR, file);
     try {
