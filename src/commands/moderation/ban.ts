@@ -34,6 +34,7 @@ export default defineCommand({
       opt
         .setName("reason")
         .setDescription("Why this user is being banned.")
+        .setMaxLength(512)
         .setRequired(false),
     )
     .addIntegerOption((opt) =>

@@ -31,9 +31,12 @@ export const updateGuildSettings = (
   guildId: string,
   patch: GuildSettingsPatch,
 ): void => {
-  ensureGuildSettings(guildId);
-  db.update(guildSettings)
-    .set({ ...patch, updatedAt: Date.now() })
-    .where(eq(guildSettings.guildId, guildId))
+  const now = Date.now();
+  db.insert(guildSettings)
+    .values({ guildId, createdAt: now, updatedAt: now, ...patch })
+    .onConflictDoUpdate({
+      target: guildSettings.guildId,
+      set: { ...patch, updatedAt: now },
+    })
     .run();
 };

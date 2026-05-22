@@ -27,7 +27,8 @@ const handleModlogSet = async (
   ]);
 
   const me = interaction.guild.members.me;
-  if (!me || !channel.permissionsFor(me).has(PermissionFlagsBits.SendMessages)) {
+  const botPerms = me ? channel.permissionsFor(me) : null;
+  if (!botPerms?.has(PermissionFlagsBits.SendMessages)) {
     await interaction.reply({
       content: `I can't send messages in ${channel.toString()}. Grant me **Send Messages** there first.`,
       flags: MessageFlags.Ephemeral,

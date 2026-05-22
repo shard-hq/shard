@@ -9,8 +9,9 @@ const MAX_DELETE_DAYS = 7;
 const parseDeleteDays = (input: string): number | null => {
   const trimmed = input.trim();
   if (trimmed === "") return 0;
+  if (!/^\d+$/.test(trimmed)) return null;
   const n = Number.parseInt(trimmed, 10);
-  if (!Number.isInteger(n) || n < 0 || n > MAX_DELETE_DAYS) return null;
+  if (n > MAX_DELETE_DAYS) return null;
   return n;
 };
 

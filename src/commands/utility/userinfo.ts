@@ -13,7 +13,7 @@ import {
   type User,
 } from "discord.js";
 import { badgeEmoji } from "../../lib/badge-emojis";
-import { BRAND_BLURPLE } from "../../lib/constants";
+import { resolveAccent } from "../../lib/user-colors";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const MAX_ROLES_DISPLAYED = 25;
@@ -60,12 +60,6 @@ const formatBadges = (user: User): string => {
   return parts.join(" · ");
 };
 
-const resolveAccent = (member: GuildMember | null, user: User): number => {
-  if (member && member.displayColor !== 0) return member.displayColor;
-  if (typeof user.accentColor === "number") return user.accentColor;
-  return BRAND_BLURPLE;
-};
-
 const formatMemberStatus = (member: GuildMember): string => {
   const tags: string[] = [];
   if (member.id === member.guild.ownerId) tags.push("Server Owner");
@@ -89,6 +83,8 @@ export default defineCommand({
         .setRequired(false),
     ),
   async execute(interaction) {
+    await interaction.deferReply();
+
     const requested = interaction.options.getUser("user") ?? interaction.user;
     const target = await requested.fetch(true);
     const resolved = interaction.options.getMember("user") ?? interaction.member;
@@ -197,7 +193,7 @@ export default defineCommand({
       );
     }
 
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [embed],
       components: [linkRow],
     });

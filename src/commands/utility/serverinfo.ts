@@ -115,6 +115,8 @@ export default defineCommand({
       return;
     }
 
+    await interaction.deferReply();
+
     const [ownerMention, fetched] = await Promise.all([
       guild
         .fetchOwner()
@@ -265,7 +267,7 @@ export default defineCommand({
       );
     }
 
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [embed],
       components: linkRow.components.length > 0 ? [linkRow] : [],
     });

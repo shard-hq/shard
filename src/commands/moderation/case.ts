@@ -91,6 +91,8 @@ const handleView = async (
     return;
   }
 
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
   const target = await interaction.client.users
     .fetch(existing.userId)
     .catch(() => null);
@@ -136,10 +138,7 @@ const handleView = async (
     embed.setThumbnail(target.displayAvatarURL({ size: 256 }));
   }
 
-  await interaction.reply({
-    embeds: [embed],
-    flags: MessageFlags.Ephemeral,
-  });
+  await interaction.editReply({ embeds: [embed] });
 };
 
 const handleEdit = async (

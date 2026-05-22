@@ -59,25 +59,25 @@ export default defineCommand({
     const count = interaction.options.getInteger("count", true);
     const user = interaction.options.getUser("user");
 
-    const fetched = await channel.messages.fetch({ limit: FETCH_BATCH });
-    const candidates = user
-      ? fetched.filter((m) => m.author.id === user.id)
-      : fetched;
-    const toDelete = candidates.first(count);
-
-    if (toDelete.length === 0) {
-      await interaction.editReply(
-        user
-          ? `No recent messages from ${user.toString()} found.`
-          : "No messages to delete.",
-      );
-      return;
-    }
-
     let deleted: number;
     try {
-      const result = await channel.bulkDelete(toDelete, true);
-      deleted = result.size;
+      if (user) {
+        const fetched = await channel.messages.fetch({ limit: FETCH_BATCH });
+        const toDelete = fetched
+          .filter((m) => m.author.id === user.id)
+          .first(count);
+        if (toDelete.length === 0) {
+          await interaction.editReply(
+            `No recent messages from ${user.toString()} found.`,
+          );
+          return;
+        }
+        const result = await channel.bulkDelete(toDelete, true);
+        deleted = result.size;
+      } else {
+        const result = await channel.bulkDelete(count, true);
+        deleted = result.size;
+      }
     } catch (err) {
       logger.error(
         { err, channelId: channel.id, guildId: interaction.guildId },

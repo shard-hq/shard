@@ -25,6 +25,7 @@ export default defineCommand({
       opt
         .setName("reason")
         .setDescription("Why this timeout is being removed.")
+        .setMaxLength(512)
         .setRequired(false),
     ),
   async execute(interaction) {

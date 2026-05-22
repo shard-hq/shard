@@ -30,7 +30,7 @@ export default defineCommand({
       .setTitle("Commands")
       .setDescription(`${commandRegistry.size} commands available`);
 
-    for (const category of Object.keys(CATEGORY_LABEL) as CommandCategory[]) {
+    for (const category of Object.values(CommandCategory)) {
       const cmds = grouped.get(category);
       if (!cmds || cmds.length === 0) continue;
       cmds.sort((a, b) => a.data.name.localeCompare(b.data.name));

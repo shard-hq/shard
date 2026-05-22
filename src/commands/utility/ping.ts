@@ -7,7 +7,7 @@ export default defineCommand({
     .setName("ping")
     .setDescription("Replies with pong and the WebSocket latency."),
   async execute(interaction) {
-    const ping = Math.round(interaction.client.ws.ping);
+    const ping = Math.max(0, Math.round(interaction.client.ws.ping));
     await interaction.reply({
       content: `Pong! \`${ping}ms\``,
       flags: MessageFlags.Ephemeral,

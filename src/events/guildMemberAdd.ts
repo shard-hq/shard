@@ -13,6 +13,20 @@ export default defineEvent({
     const roleIds = listAutoroles(member.guild.id);
     if (roleIds.length === 0) return;
 
+    try {
+      await member.roles.add(roleIds, AUDIT_REASON);
+      logger.info(
+        { guild: member.guild.id, user: member.id, roles: roleIds },
+        "autoroles assigned",
+      );
+      return;
+    } catch (err) {
+      logger.warn(
+        { err, guild: member.guild.id, user: member.id, roles: roleIds },
+        "bulk autorole assign failed, retrying per role",
+      );
+    }
+
     const assigned: string[] = [];
     for (const roleId of roleIds) {
       try {
@@ -20,12 +34,7 @@ export default defineEvent({
         assigned.push(roleId);
       } catch (err) {
         logger.warn(
-          {
-            err,
-            guild: member.guild.id,
-            user: member.id,
-            role: roleId,
-          },
+          { err, guild: member.guild.id, user: member.id, role: roleId },
           "autorole assign failed",
         );
       }
@@ -34,7 +43,7 @@ export default defineEvent({
     if (assigned.length > 0) {
       logger.info(
         { guild: member.guild.id, user: member.id, roles: assigned },
-        "autoroles assigned",
+        "autoroles assigned (fallback)",
       );
     }
   },

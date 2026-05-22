@@ -47,6 +47,7 @@ export default defineCommand({
       opt
         .setName("reason")
         .setDescription("Why this user is being timed out.")
+        .setMaxLength(512)
         .setRequired(false),
     ),
   async execute(interaction) {

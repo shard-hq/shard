@@ -311,6 +311,11 @@ export const performUnban = async (
 ): Promise<PerformResult> => {
   const { interaction, target, reason } = input;
 
+  const guardError = checkGuards(interaction, target, null, {
+    requireBotHierarchy: false,
+  });
+  if (guardError) return { ok: false, error: guardError };
+
   try {
     await interaction.guild.bans.remove(
       target.id,

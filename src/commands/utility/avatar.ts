@@ -6,18 +6,11 @@ import {
   GuildMember,
   InteractionContextType,
   SlashCommandBuilder,
-  type User,
 } from "discord.js";
-import { BRAND_BLURPLE } from "../../lib/constants";
+import { resolveAccent } from "../../lib/user-colors";
 import { CommandCategory, defineCommand } from "../../types/command";
 
 const AVATAR_SIZE = 1024;
-
-const resolveAccent = (member: GuildMember | null, user: User): number => {
-  if (member && member.displayColor !== 0) return member.displayColor;
-  if (typeof user.accentColor === "number") return user.accentColor;
-  return BRAND_BLURPLE;
-};
 
 export default defineCommand({
   category: CommandCategory.Utility,
@@ -32,6 +25,8 @@ export default defineCommand({
         .setRequired(false),
     ),
   async execute(interaction) {
+    await interaction.deferReply();
+
     const requested = interaction.options.getUser("user") ?? interaction.user;
     const target = await requested.fetch(true);
     const resolved = interaction.options.getMember("user") ?? interaction.member;
@@ -73,6 +68,6 @@ export default defineCommand({
       );
     }
 
-    await interaction.reply({ embeds: [embed], components: [links] });
+    await interaction.editReply({ embeds: [embed], components: [links] });
   },
 });
