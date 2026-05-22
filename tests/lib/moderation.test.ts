@@ -7,6 +7,7 @@ import type {
 import {
   buildModerationEmbed,
   checkGuards,
+  formatAuditReason,
   formatDuration,
   MAX_TIMEOUT_MS,
   parseDuration,
@@ -187,6 +188,22 @@ describe("buildModerationEmbed", () => {
       caseId: 5,
     }).toJSON();
     expect(json.fields ?? []).toHaveLength(0);
+  });
+});
+
+describe("formatAuditReason", () => {
+  const moderator = mockUser("999", "alice");
+
+  test("appends the reason after the moderator username", () => {
+    expect(formatAuditReason(moderator, "spam")).toBe("alice — spam");
+  });
+
+  test("returns only the moderator username when reason is null", () => {
+    expect(formatAuditReason(moderator, null)).toBe("alice");
+  });
+
+  test("returns only the moderator username when reason is empty", () => {
+    expect(formatAuditReason(moderator, "")).toBe("alice");
   });
 });
 

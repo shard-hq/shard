@@ -1,10 +1,18 @@
 import { mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { constants, Database } from "bun:sqlite";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { logger } from "../lib/logger";
 
-const DB_PATH = path.resolve(process.cwd(), "data/shard.db");
+const defaultDbPath = (): string => {
+  if (Bun.env.NODE_ENV === "test") {
+    return path.join(tmpdir(), `shard-test-${process.pid}.db`);
+  }
+  return path.resolve(process.cwd(), "data/shard.db");
+};
+
+const DB_PATH = Bun.env.DB_PATH ?? defaultDbPath();
 
 mkdirSync(path.dirname(DB_PATH), { recursive: true });
 

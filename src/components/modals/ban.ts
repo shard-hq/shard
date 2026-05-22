@@ -6,7 +6,7 @@ import { defineModal } from "../../types/modal";
 const SECONDS_PER_DAY = 24 * 60 * 60;
 const MAX_DELETE_DAYS = 7;
 
-const parseDeleteDays = (input: string): number | null => {
+export const parseDeleteDays = (input: string): number | null => {
   const trimmed = input.trim();
   if (trimmed === "") return 0;
   if (!/^\d+$/.test(trimmed)) return null;
